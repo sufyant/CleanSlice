@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Sufyan Taskin",
+  "classifications": ["WebAPI", "Clean Architecture", "Vertical Slice", "CQRS"],
+  "identity": "CleanSlice.Template",
+  "name": "CleanSlice .NET 9 WebAPI Template",
+  "shortName": "cleanslice",
+  "sourceName": "CleanSlice",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}

@@ -13,6 +13,11 @@
     <ItemGroup>
         <!-- Application Layer -->
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+        <PackageReference Include="MediatR" Version="13.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="System.Data.Common" Version="4.3.0" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using CleanSlice.Shared;
+using CleanSlice.Shared.Results;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;

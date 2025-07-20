@@ -1,4 +1,4 @@
-﻿using CleanSlice.Shared;
+﻿using CleanSlice.Shared.Results;
 using MediatR;
 
 namespace CleanSlice.Application.Abstractions.Messaging;

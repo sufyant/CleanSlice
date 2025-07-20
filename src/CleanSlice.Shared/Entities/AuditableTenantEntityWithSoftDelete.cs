@@ -1,4 +1,6 @@
-﻿namespace CleanSlice.Shared;
+﻿using CleanSlice.Shared.Interfaces;
+
+namespace CleanSlice.Shared.Entities;
 
 public class AuditableTenantEntityWithSoftDelete : TenantBaseEntity, IAuditableEntity, ISoftDelete
 {

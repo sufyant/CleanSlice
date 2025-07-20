@@ -1,8 +1,8 @@
-﻿using CleanSlice.Shared;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 using System.Diagnostics;
+using CleanSlice.Shared.Results;
 
 namespace CleanSlice.Application.Abstractions.Behaviors;
 

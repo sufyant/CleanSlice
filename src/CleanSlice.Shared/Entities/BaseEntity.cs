@@ -1,4 +1,6 @@
-﻿namespace CleanSlice.Shared;
+﻿using CleanSlice.Shared.Interfaces;
+
+namespace CleanSlice.Shared.Entities;
 
 public abstract class BaseEntity
 {

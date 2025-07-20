@@ -1,6 +1,8 @@
-﻿namespace CleanSlice.Shared;
+﻿using CleanSlice.Shared.Interfaces;
 
-public class AuditableTenantEntity : TenantBaseEntity, IAuditableEntity
+namespace CleanSlice.Shared.Entities;
+
+public abstract class AuditableEntity : BaseEntity, IAuditableEntity
 {
     public Guid CreatedBy { get; set; }
     public DateTimeOffset CreatedAt { get; set; }

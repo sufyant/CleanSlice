@@ -1,4 +1,4 @@
-﻿namespace CleanSlice.Shared;
+﻿namespace CleanSlice.Shared.Results;
 
 public sealed record ValidationError(Error[] Errors) : Error("Validation.General",
     "One or more validation errors occurred",

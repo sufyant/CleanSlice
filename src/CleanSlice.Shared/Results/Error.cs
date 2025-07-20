@@ -1,4 +1,4 @@
-﻿namespace CleanSlice.Shared;
+﻿namespace CleanSlice.Shared.Results;
 
 public record Error(string Code, string Description, ErrorType Type)
 {

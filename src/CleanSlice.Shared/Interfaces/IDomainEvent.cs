@@ -1,5 +1,5 @@
 ﻿using MediatR;
 
-namespace CleanSlice.Shared;
+namespace CleanSlice.Shared.Interfaces;
 
 public interface IDomainEvent : INotification;

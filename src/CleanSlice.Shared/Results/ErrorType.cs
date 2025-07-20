@@ -1,4 +1,4 @@
-﻿namespace CleanSlice.Shared;
+﻿namespace CleanSlice.Shared.Results;
 
 public enum ErrorType
 {

@@ -1,5 +1,5 @@
 using CleanSlice.Application.Abstractions.Caching;
-using CleanSlice.Shared;
+using CleanSlice.Shared.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

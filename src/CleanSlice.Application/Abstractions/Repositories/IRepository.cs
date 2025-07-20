@@ -1,4 +1,4 @@
-﻿using CleanSlice.Shared;
+﻿using CleanSlice.Shared.Results;
 
 namespace CleanSlice.Application.Abstractions.Repositories;
 

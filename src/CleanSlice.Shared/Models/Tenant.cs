@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using CleanSlice.Shared.Entities;
 
-namespace CleanSlice.Shared;
+namespace CleanSlice.Shared.Models;
 
 public class Tenant : BaseEntity
 {

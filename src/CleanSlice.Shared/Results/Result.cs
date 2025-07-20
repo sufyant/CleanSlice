@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace CleanSlice.Shared;
+namespace CleanSlice.Shared.Results;
 
 public class Result
 {

@@ -1,6 +1,4 @@
-﻿using CleanSlice.Shared.Results;
-
-namespace CleanSlice.Application.Abstractions.Repositories;
+﻿namespace CleanSlice.Application.Abstractions.Repositories;
 
 public interface IBaseRepository<T> where T : class
 {

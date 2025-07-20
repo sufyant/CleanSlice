@@ -32,6 +32,7 @@
     
     <ItemGroup>
         <!-- Persistence Layer -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>

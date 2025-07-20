@@ -2,7 +2,7 @@
 
 namespace CleanSlice.Application.Abstractions.Repositories;
 
-public interface IRepository<T> where T : class
+public interface IBaseRepository<T> where T : class
 {
     // Query methods
     IQueryable<T> Query();
@@ -16,5 +16,5 @@ public interface IRepository<T> where T : class
     void Delete(T entity);
 
     // SQL operations
-    Task<Result<IQueryable<TResult>>> SqlQuery<TResult>(string sql, params object[] parameters) where TResult : class;
+    Task<List<TResult>> SqlQuery<TResult>(string sql, params object[] parameters) where TResult : class;
 }

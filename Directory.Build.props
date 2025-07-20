@@ -1,0 +1,32 @@
+<Project>
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TargetFramework>net9.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Api Layer -->
+    </ItemGroup>
+    
+    <ItemGroup>
+        <!-- Application Layer -->
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Domain Layer -->
+    </ItemGroup>
+    
+    <ItemGroup>
+        <!-- Infrastructure Layer -->
+    </ItemGroup>
+    
+    <ItemGroup>
+        <!-- Persistence Layer -->
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Shared Layer -->
+    </ItemGroup>
+</Project>

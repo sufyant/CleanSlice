@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 
 namespace CleanSlice.Application.Abstractions.Behaviors;
 
-internal sealed class ExceptionHandlingPipelineBehavior<TRequest, TResponse>(
-    ILogger<ExceptionHandlingPipelineBehavior<TRequest, TResponse>> logger) 
+internal sealed class ExceptionHandlingBehavior<TRequest, TResponse>(
+    ILogger<ExceptionHandlingBehavior<TRequest, TResponse>> logger) 
     : IPipelineBehavior<TRequest, TResponse> 
     where TRequest : class
 {

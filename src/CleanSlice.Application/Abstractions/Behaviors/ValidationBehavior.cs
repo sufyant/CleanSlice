@@ -6,7 +6,7 @@ using MediatR;
 
 namespace CleanSlice.Application.Abstractions.Behaviors;
 
-internal sealed class ValidationPipelineBehavior<TRequest, TResponse>(
+internal sealed class ValidationBehavior<TRequest, TResponse>(
     IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
@@ -20,7 +20,7 @@ internal sealed class ValidationPipelineBehavior<TRequest, TResponse>(
 
         if (validationFailures.Length == 0)
         {
-            return await next();
+            return await next(cancellationToken);
         }
 
         if (typeof(TResponse).IsGenericType &&

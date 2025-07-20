@@ -12,11 +12,18 @@ public static class DependencyInjection
         {
             config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
 
-            config.AddOpenBehavior(typeof(ExceptionHandlingPipelineBehavior<,>));
-            config.AddOpenBehavior(typeof(QueryCachingPipelineBehavior<,>));
-            config.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
-            config.AddOpenBehavior(typeof(TransactionalPipelineBehavior<,>));
-            config.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
+            // 1. Logging & Exception Handling
+            config.AddOpenBehavior(typeof(ExceptionHandlingBehavior<,>));
+            config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+
+            // 2. Validation
+            config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+
+            // 3. Caching
+            config.AddOpenBehavior(typeof(CachingBehavior<,>));
+
+            // 4. Transaction
+            config.AddOpenBehavior(typeof(TransactionalBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly, includeInternalTypes: true);

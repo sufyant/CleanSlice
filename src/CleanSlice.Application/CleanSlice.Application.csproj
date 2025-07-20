@@ -13,6 +13,10 @@
     <PackageReference Include="System.Data.Common" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

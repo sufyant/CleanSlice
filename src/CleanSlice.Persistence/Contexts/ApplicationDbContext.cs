@@ -1,11 +1,12 @@
-﻿using CleanSlice.Persistence.Extensions;
+﻿using CleanSlice.Application.Abstractions.Data;
+using CleanSlice.Persistence.Extensions;
 using CleanSlice.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanSlice.Persistence.Contexts;
 
 public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : DbContext(options)
+    : DbContext(options), IApplicationDbContext
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

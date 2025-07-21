@@ -1,6 +1,6 @@
-namespace CleanSlice.Shared.ValueObjects;
+namespace CleanSlice.Domain.Common.ValueObjects;
 
-public sealed class FullName : ValueObject
+public sealed class FullName
 {
     public string FirstName { get; }
     public string LastName { get; }
@@ -25,12 +25,6 @@ public sealed class FullName : ValueObject
     }
 
     public string GetInitials() => $"{FirstName[0]}{LastName[0]}".ToUpperInvariant();
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return FirstName;
-        yield return LastName;
-    }
 
     public override string ToString() => $"{FirstName} {LastName}";
 }

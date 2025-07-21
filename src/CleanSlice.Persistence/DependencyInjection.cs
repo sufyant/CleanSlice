@@ -11,17 +11,23 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionString("Database") ??
-                                  throw new ArgumentNullException(nameof(configuration));
+        var tenantCatalogDbConnectionString = configuration.GetConnectionString("TenantCatalog") ??
+                                       throw new ArgumentNullException(nameof(configuration));
+        
+        var tenantDbConnectionString = configuration.GetConnectionString("Tenant") ??
+                                              throw new ArgumentNullException(nameof(configuration));
 
-        services.AddDbContext<ApplicationDbContext>(options => 
-            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+        services.AddDbContext<TenantDbContext>(options => 
+            options.UseNpgsql(tenantDbConnectionString).UseSnakeCaseNamingConvention());
 
-        services.AddScoped<IApplicationDbContext>(sp => 
-            sp.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<ITenantDbContext>(sp => 
+            sp.GetRequiredService<TenantDbContext>());
+        
+        services.AddDbContext<TenantCatalogDbContext>(options =>
+            options.UseNpgsql(tenantCatalogDbConnectionString).UseSnakeCaseNamingConvention());
 
         services.AddSingleton<IDbConnectionFactory>(_ => 
-            new DbConnectionFactory(connectionString));
+            new DbConnectionFactory(tenantDbConnectionString));
         
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 

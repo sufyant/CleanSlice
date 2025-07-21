@@ -1,4 +1,6 @@
-﻿namespace CleanSlice.Shared.Entities;
+﻿using CleanSlice.Shared.Entities;
+
+namespace CleanSlice.Domain.Outbox;
 
 public sealed class OutboxMessage : BaseEntity
 {

@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
 
-namespace CleanSlice.Shared.ValueObjects;
+namespace CleanSlice.Domain.Common.ValueObjects;
 
-public sealed class Email : ValueObject
+public sealed class Email
 {
     private static readonly Regex EmailRegex = new(
         @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
@@ -29,11 +29,7 @@ public sealed class Email : ValueObject
     }
 
     public string GetDomain() => Value.Split('@')[1];
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return Value;
-    }
+    
 
     public override string ToString() => Value;
 

@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using CleanSlice.Application.Abstractions.Data;
+using CleanSlice.Domain.Outbox;
 using CleanSlice.Persistence.Contexts;
 using CleanSlice.Shared.Entities;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -7,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace CleanSlice.Persistence.UnitOfWork;
 
-internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
+internal sealed class UnitOfWork(TenantDbContext dbContext) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
 

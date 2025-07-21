@@ -1,6 +1,6 @@
-namespace CleanSlice.Shared.ValueObjects;
+namespace CleanSlice.Domain.Common.ValueObjects;
 
-public sealed class Money : ValueObject
+public sealed class Money
 {
     public decimal Amount { get; }
     public string Currency { get; }
@@ -39,12 +39,6 @@ public sealed class Money : ValueObject
             throw new InvalidOperationException("Insufficient funds");
 
         return new Money(Amount - other.Amount, Currency);
-    }
-
-    protected override IEnumerable<object> GetEqualityComponents()
-    {
-        yield return Amount;
-        yield return Currency;
     }
 
     public override string ToString() => $"{Amount:F2} {Currency}";

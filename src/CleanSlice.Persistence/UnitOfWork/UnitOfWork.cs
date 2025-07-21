@@ -10,8 +10,6 @@ namespace CleanSlice.Persistence.UnitOfWork;
 internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
-    private Guid CurrentUserId;
-    private Guid CurrentTenantId; 
 
     public async Task<IDbTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
     {

@@ -7,12 +7,13 @@ public sealed class TenantCatalogDbContext(DbContextOptions<TenantCatalogDbConte
     : DbContext(options)
 {
     public DbSet<Tenant> Tenants { get; set; }
+    public DbSet<TenantSetting> TenantSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantCatalogDbContext).Assembly);
-        
         modelBuilder.HasDefaultSchema(Schemas.TenantCatalog);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantCatalogDbContext).Assembly);
         
         base.OnModelCreating(modelBuilder);
     }

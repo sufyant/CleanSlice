@@ -1,4 +1,5 @@
-﻿using CleanSlice.Domain.Tenants.Events;
+﻿using CleanSlice.Domain.Common.Exceptions;
+using CleanSlice.Domain.Tenants.Events;
 using CleanSlice.Shared.Entities;
 
 namespace CleanSlice.Domain.Tenants;
@@ -10,37 +11,46 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
     private Tenant() { }
 
-    private Tenant(Guid id, string name, string connectionString, Guid createdBy, DateTimeOffset createdAt)
+    private Tenant(Guid id, string name, string connectionString)
     {
         Id = id;
         Name = name;
         ConnectionString = connectionString;
-        CreatedBy = createdBy;
-        CreatedAt = createdAt;
     }
 
-    public static Tenant Create(string name, string connectionString, Guid createdBy)
+    public static Tenant Create(Guid id, string name, string connectionString)
     {
-        var tenantId = Guid.NewGuid();
-        var tenant = new Tenant(tenantId, name, connectionString, createdBy, DateTimeOffset.UtcNow);
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainException("Name cannot be empty");
+        
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new DomainException("Connection string cannot be empty");
+        
+        var tenant = new Tenant(id, name, connectionString);
 
-        tenant.RaiseDomainEvent(new TenantCreatedDomainEvent(tenantId, name));
+        tenant.RaiseDomainEvent(new TenantCreatedDomainEvent(id, name));
 
         return tenant;
     }
 
     public void UpdateName(string name)
     {
+        if (IsDeleted)
+            throw new DomainException("Cannot update deleted tenant");
+        
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Name cannot be empty", nameof(name));
+            throw new DomainException("Name cannot be empty");
 
         Name = name;
     }
 
     public void UpdateConnectionString(string connectionString)
     {
+        if (IsDeleted)
+            throw new DomainException("Cannot update deleted tenant");
+        
         if (string.IsNullOrWhiteSpace(connectionString))
-            throw new ArgumentException("Connection string cannot be empty", nameof(connectionString));
+            throw new DomainException("Connection string cannot be empty");
 
         ConnectionString = connectionString;
     }

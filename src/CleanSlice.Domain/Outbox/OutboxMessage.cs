@@ -16,16 +16,17 @@ public sealed class OutboxMessage : BaseEntity
 
     private OutboxMessage() { }
 
-    public OutboxMessage(
-        Guid id,
-        string type, 
-        string content, 
-        DateTimeOffset occurredOn)
+    private OutboxMessage(Guid id, string type, string content, DateTimeOffset occurredOn)
     {
         Id = id;
         Type = type;
         Content = content;
         OccurredOn = occurredOn;
+    }
+    
+    public static OutboxMessage Create(Guid id, string type, string content)
+    {
+        return new OutboxMessage(id, type, content, DateTimeOffset.UtcNow);
     }
 
     public void MarkAsProcessed()

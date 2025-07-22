@@ -3,18 +3,14 @@ using CleanSlice.Shared.Entities;
 
 namespace CleanSlice.Domain.Tenants;
 
-public sealed class TenantSettings : AuditableTenantEntityWithSoftDelete
+public sealed class TenantSetting : AuditableTenantEntityWithSoftDelete
 {
     public string Key { get; private set; } = string.Empty;
     public string Value { get; private set; } = string.Empty;
 
-    private TenantSettings() { }
+    private TenantSetting() { }
 
-    private TenantSettings(
-        Guid id,
-        Guid tenantId,
-        string key,
-        string value)
+    private TenantSetting(Guid id, Guid tenantId, string key, string value)
     {
         Id = id;
         TenantId = tenantId;
@@ -22,10 +18,7 @@ public sealed class TenantSettings : AuditableTenantEntityWithSoftDelete
         Value = value;
     }
 
-    public static TenantSettings Create(
-        Guid tenantId,
-        string key,
-        string value)
+    public static TenantSetting Create(Guid id, Guid tenantId, string key, string value)
     {
         if (string.IsNullOrWhiteSpace(key))
             throw new DomainException("Key cannot be empty");
@@ -33,7 +26,7 @@ public sealed class TenantSettings : AuditableTenantEntityWithSoftDelete
         if (string.IsNullOrWhiteSpace(value))
             throw new DomainException("Value cannot be empty");
 
-        return new TenantSettings(Guid.NewGuid(), tenantId, key, value);
+        return new TenantSetting(id, tenantId, key, value);
     }
 
     public void UpdateValue(string value)

@@ -11,23 +11,31 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
     {
+        #region Tenant Catalog DbContext
+
         var tenantCatalogDbConnectionString = configuration.GetConnectionString("TenantCatalog") ??
-                                       throw new ArgumentNullException(nameof(configuration));
-        
-        var tenantDbConnectionString = configuration.GetConnectionString("Tenant") ??
                                               throw new ArgumentNullException(nameof(configuration));
-
-        services.AddDbContext<TenantDbContext>(options => 
-            options.UseNpgsql(tenantDbConnectionString).UseSnakeCaseNamingConvention());
-
-        services.AddScoped<ITenantDbContext>(sp => 
-            sp.GetRequiredService<TenantDbContext>());
         
         services.AddDbContext<TenantCatalogDbContext>(options =>
             options.UseNpgsql(tenantCatalogDbConnectionString).UseSnakeCaseNamingConvention());
 
+        #endregion
+        
+        #region Application DbContext
+        
+        var applicationDbConnectionString = configuration.GetConnectionString("Tenant") ??
+                                            throw new ArgumentNullException(nameof(configuration));
+
+        services.AddDbContext<ApplicationDbContext>(options => 
+            options.UseNpgsql(applicationDbConnectionString).UseSnakeCaseNamingConvention());
+
+        services.AddScoped<IApplicationDbContext>(sp => 
+            sp.GetRequiredService<ApplicationDbContext>());
+        
+        #endregion
+        
         services.AddSingleton<IDbConnectionFactory>(_ => 
-            new DbConnectionFactory(tenantDbConnectionString));
+            new DbConnectionFactory(applicationDbConnectionString));
         
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 

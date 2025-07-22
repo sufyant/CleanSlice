@@ -4,5 +4,5 @@ namespace CleanSlice.Shared.Entities;
 
 public abstract class TenantBaseEntity : BaseEntity, IMustHaveTenant
 {
-    public Guid TenantId { get; set; }
+    public Guid TenantId { get; protected set; }
 }

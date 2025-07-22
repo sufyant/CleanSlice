@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace CleanSlice.Persistence.Repositories;
 
-internal abstract class BaseRepository<T>(TenantDbContext dbContext) : IBaseRepository<T>
+internal abstract class BaseRepository<T>(ApplicationDbContext dbContext) : IBaseRepository<T>
     where T : BaseEntity
 {
     public virtual async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>

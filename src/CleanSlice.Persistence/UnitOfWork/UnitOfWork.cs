@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace CleanSlice.Persistence.UnitOfWork;
 
-internal sealed class UnitOfWork(TenantDbContext dbContext) : IUnitOfWork
+internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
 {
     private IDbContextTransaction? _transaction;
 

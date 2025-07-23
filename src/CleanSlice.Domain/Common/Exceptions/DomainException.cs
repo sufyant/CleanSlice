@@ -1,4 +1,4 @@
-﻿tamnamespace CleanSlice.Domain.Common.Exceptions;
+﻿namespace CleanSlice.Domain.Common.Exceptions;
 
 /// <summary>
 /// Base exception for all domain-related errors.

@@ -9,8 +9,13 @@ public sealed class ValidationException : DomainException
     public ValidationException(string message) : base(message)
     {
     }
-    
+
     public ValidationException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    public ValidationException(string propertyName, string errorMessage)
+        : base($"Validation failed for property '{propertyName}': {errorMessage}")
     {
     }
 }

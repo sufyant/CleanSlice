@@ -34,9 +34,7 @@ internal sealed class ValidationBehavior<TRequest, TResponse>(
 
             if (failureMethod is not null)
             {
-                return (TResponse)failureMethod.Invoke(
-                    null,
-                    new object[] { CreateValidationError(validationFailures) });
+                return (TResponse)failureMethod.Invoke(null, new object[] { CreateValidationError(validationFailures) });
             }
         }
         else if (typeof(TResponse) == typeof(Result))

@@ -21,11 +21,11 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
     public static Tenant Create(Guid id, string name, string connectionString)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Name cannot be empty");
-        
+            throw new ValidationException(nameof(name), "Name cannot be empty");
+
         if (string.IsNullOrWhiteSpace(connectionString))
-            throw new DomainException("Connection string cannot be empty");
-        
+            throw new ValidationException(nameof(connectionString), "Connection string cannot be empty");
+
         var tenant = new Tenant(id, name, connectionString);
 
         tenant.RaiseDomainEvent(new TenantCreatedDomainEvent(id, name));
@@ -36,10 +36,10 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
     public void UpdateName(string name)
     {
         if (IsDeleted)
-            throw new DomainException("Cannot update deleted tenant");
-        
+            throw new BusinessRuleViolationException("Cannot update deleted tenant");
+
         if (string.IsNullOrWhiteSpace(name))
-            throw new DomainException("Name cannot be empty");
+            throw new ValidationException(nameof(name), "Name cannot be empty");
 
         Name = name;
     }
@@ -47,10 +47,10 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
     public void UpdateConnectionString(string connectionString)
     {
         if (IsDeleted)
-            throw new DomainException("Cannot update deleted tenant");
-        
+            throw new BusinessRuleViolationException("Cannot update deleted tenant");
+
         if (string.IsNullOrWhiteSpace(connectionString))
-            throw new DomainException("Connection string cannot be empty");
+            throw new ValidationException(nameof(connectionString), "Connection string cannot be empty");
 
         ConnectionString = connectionString;
     }

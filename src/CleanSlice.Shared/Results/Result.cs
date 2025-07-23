@@ -31,6 +31,9 @@ public class Result
 
     public static Result<TValue> Failure<TValue>(Error error) =>
         new(default, false, error);
+
+    // Implicit operator: Error → Result.Failure
+    public static implicit operator Result(Error error) => Failure(error);
 }
 
 public class Result<TValue> : Result
@@ -53,4 +56,7 @@ public class Result<TValue> : Result
 
     public static Result<TValue> ValidationFailure(Error error) =>
         new(default, false, error);
+
+    // Implicit operator: Error → Result<T>.Failure  
+    public static implicit operator Result<TValue>(Error error) => Failure<TValue>(error);
 }

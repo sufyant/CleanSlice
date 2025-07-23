@@ -15,6 +15,9 @@ public sealed class TenantManagementRepository(TenantCatalogDbContext context) :
     
     public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default) =>
         await context.Tenants.AnyAsync(t => t.Name == name, cancellationToken);
+
+    public async Task<bool> ExistsBySlugAsync(string slug, CancellationToken cancellationToken = default) =>
+        await context.Tenants.AnyAsync(t => t.Slug == slug, cancellationToken);
     
     public async Task<Tenant> CreateTenantAsync(Tenant tenant, CancellationToken cancellationToken = default)
     {

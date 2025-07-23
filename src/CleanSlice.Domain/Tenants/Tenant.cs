@@ -10,7 +10,6 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
     public string Domain { get; private set; } = string.Empty;
     public string Slug { get; private set; } = string.Empty;
     public string ConnectionString { get; private set; } = string.Empty;
-    public bool IsActive { get; private set; } = true;
 
     private Tenant() { }
 
@@ -86,21 +85,5 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
             throw new ValidationException(nameof(connectionString), "Connection string cannot be empty");
 
         ConnectionString = connectionString;
-    }
-
-    public void Activate()
-    {
-        if (IsDeleted)
-            throw new BusinessRuleViolationException("Cannot activate deleted tenant");
-
-        IsActive = true;
-    }
-
-    public void Deactivate()
-    {
-        if (IsDeleted)
-            throw new BusinessRuleViolationException("Cannot deactivate deleted tenant");
-
-        IsActive = false;
     }
 }

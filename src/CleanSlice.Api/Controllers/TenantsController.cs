@@ -17,6 +17,7 @@ namespace CleanSlice.Api.Controllers;
 [ApiVersion(ApiVersions.V1)]
 [Authorize]
 [Route("v{version:apiVersion}/tenants")]
+[Tags("Tenant Management")]
 public class TenantsController(ISender sender, IMapper mapper) : BaseController
 {
     [HttpGet]
@@ -58,7 +59,7 @@ public class TenantsController(ISender sender, IMapper mapper) : BaseController
     {
         // Map CreateTenantRequest to CreateTenantCommand
         var command = mapper.Map<CreateTenantCommand>(request);
-        
+
         var result = await sender.Send(command, cancellationToken);
 
         return Ok(result.Value);
@@ -76,5 +77,4 @@ public class TenantsController(ISender sender, IMapper mapper) : BaseController
 
         return Ok();
     }
-
 }

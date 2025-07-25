@@ -1,7 +1,6 @@
 ﻿using CleanSlice.Application.Abstractions.Messaging;
 using CleanSlice.Application.Abstractions.Repositories.Management;
 using CleanSlice.Application.Features.Tenants.DTOs;
-using CleanSlice.Domain.Tenants;
 using CleanSlice.Shared.Results;
 using CleanSlice.Shared.Results.Errors;
 

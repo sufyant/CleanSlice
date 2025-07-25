@@ -1,5 +1,4 @@
 using AutoMapper;
-using AutoMapper;
 using CleanSlice.Application.Features.Tenants.Commands.CreateTenant;
 using CleanSlice.Application.Features.Tenants.DTOs;
 using CleanSlice.Domain.Tenants;

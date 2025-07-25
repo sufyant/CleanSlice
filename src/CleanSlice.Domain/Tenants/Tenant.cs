@@ -1,7 +1,6 @@
 ﻿using CleanSlice.Domain.Common.Exceptions;
 using CleanSlice.Domain.Tenants.Events;
 using CleanSlice.Shared.Entities;
-using CleanSlice.Shared.Interfaces;
 
 namespace CleanSlice.Domain.Tenants;
 
@@ -57,7 +56,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
         UpdateSlug(slug);
         UpdateConnectionString(connectionString);
 
-        RaiseDomainEvent(new TenantUpdatedDomainEvent(id, Name));
+        RaiseDomainEvent(new TenantUpdatedDomainEvent(id));
     }
 
     private void UpdateName(string name)

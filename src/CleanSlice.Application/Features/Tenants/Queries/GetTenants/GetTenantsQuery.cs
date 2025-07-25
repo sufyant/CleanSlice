@@ -1,5 +1,4 @@
 ﻿using CleanSlice.Application.Abstractions.Caching;
-using CleanSlice.Application.Abstractions.Messaging;
 using CleanSlice.Application.Features.Tenants.DTOs;
 using CleanSlice.Shared.Results;
 

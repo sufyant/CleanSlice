@@ -2,7 +2,7 @@
 
 namespace CleanSlice.Application.Features.Tenants.Queries.GetTenant;
 
-public class GetTenantQueryValidator : AbstractValidator<GetTenantQuery>
+internal class GetTenantQueryValidator : AbstractValidator<GetTenantQuery>
 {
     public GetTenantQueryValidator()
     {

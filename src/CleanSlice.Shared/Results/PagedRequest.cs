@@ -6,6 +6,7 @@ public abstract class PagedRequest
     private int _pageSize = 10;
 
     public int Page { get; set; } = 1;
+    public string? SearchTerm { get; set; }
 
     public int PageSize
     {

@@ -2,13 +2,13 @@
 using CleanSlice.Domain.Tenants.Events;
 using MediatR;
 
-namespace CleanSlice.Application.Features.Tenants.Commands.CreateTenant;
+namespace CleanSlice.Application.Features.Tenants.Commands.UpdateTenant;
 
-internal sealed class TenantCreatedDomainEventHandler(
+internal sealed class TenantUpdatedDomainEventHandler(
     ICacheService cacheService
-    ) : INotificationHandler<TenantCreatedDomainEvent>
+    ) : INotificationHandler<TenantUpdatedDomainEvent>
 {
-    public async Task Handle(TenantCreatedDomainEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(TenantUpdatedDomainEvent notification, CancellationToken cancellationToken)
     {
         // Remove all tenant-related caches
         await cacheService.RemoveByPatternAsync("tenants:*", cancellationToken);

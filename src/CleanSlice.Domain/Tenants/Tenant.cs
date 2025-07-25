@@ -1,6 +1,7 @@
 ﻿using CleanSlice.Domain.Common.Exceptions;
 using CleanSlice.Domain.Tenants.Events;
 using CleanSlice.Shared.Entities;
+using CleanSlice.Shared.Interfaces;
 
 namespace CleanSlice.Domain.Tenants;
 
@@ -38,11 +39,11 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
         var tenant = new Tenant(id, name, domain, slug, connectionString);
 
-        tenant.RaiseDomainEvent(new TenantCreatedDomainEvent(id, name));
+        tenant.RaiseDomainEvent(new TenantCreatedDomainEvent(id));
 
         return tenant;
     }
-    
+
     public void Update(Guid id, string name, string domain, string slug, string connectionString)
     {
         if (IsDeleted)
@@ -50,14 +51,16 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
         if (id != Id)
             throw new ValidationException(nameof(id), "Tenant ID mismatch");
-        
+
         UpdateName(name);
         UpdateDomain(domain);
         UpdateSlug(slug);
         UpdateConnectionString(connectionString);
+
+        RaiseDomainEvent(new TenantUpdatedDomainEvent(id, Name));
     }
 
-    public void UpdateName(string name)
+    private void UpdateName(string name)
     {
         if (IsDeleted)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
@@ -68,7 +71,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
         Name = name;
     }
 
-    public void UpdateDomain(string domain)
+    private void UpdateDomain(string domain)
     {
         if (IsDeleted)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
@@ -79,7 +82,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
         Domain = domain;
     }
 
-    public void UpdateSlug(string slug)
+    private void UpdateSlug(string slug)
     {
         if (IsDeleted)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
@@ -90,7 +93,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
         Slug = slug;
     }
 
-    public void UpdateConnectionString(string connectionString)
+    private void UpdateConnectionString(string connectionString)
     {
         if (IsDeleted)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");

@@ -5,5 +5,5 @@ public sealed record TenantDto(
     string Name,
     string Domain,
     string Slug,
-    string ConnectionString
+    string ConnectionString 
     );

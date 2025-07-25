@@ -2,4 +2,4 @@
 
 namespace CleanSlice.Domain.Tenants.Events;
 
-public sealed record TenantCreatedDomainEvent(Guid TenantId) : IDomainEvent;
+public sealed record TenantUpdatedDomainEvent(Guid TenantId) : IDomainEvent;

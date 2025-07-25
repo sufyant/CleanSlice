@@ -7,10 +7,9 @@ using CleanSlice.Shared.Results.Errors;
 
 namespace CleanSlice.Application.Features.Tenants.Queries.GetTenant;
 
-public sealed class GetTenantQueryHandler(
+internal sealed class GetTenantQueryHandler(
     ITenantManagementRepository tenantManagementRepository
-    )
-    : IQueryHandler<GetTenantQuery, TenantDto>
+    ) : IQueryHandler<GetTenantQuery, TenantDto>
 {
     public async Task<Result<TenantDto>> Handle(GetTenantQuery request, CancellationToken cancellationToken)
     {

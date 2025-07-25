@@ -1,5 +1,4 @@
-﻿using CleanSlice.Application.Abstractions.Data;
-using CleanSlice.Application.Abstractions.Messaging;
+﻿using CleanSlice.Application.Abstractions.Messaging;
 using CleanSlice.Application.Abstractions.Repositories.Management;
 using CleanSlice.Domain.Tenants;
 using CleanSlice.Shared.Results;

@@ -1,5 +1,4 @@
-﻿using System.Windows.Input;
-using CleanSlice.Application.Abstractions.Messaging;
+﻿using CleanSlice.Application.Abstractions.Messaging;
 
 namespace CleanSlice.Application.Features.Tenants.Commands.CreateTenant;
 

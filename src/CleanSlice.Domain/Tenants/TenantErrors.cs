@@ -9,4 +9,10 @@ public static class TenantErrors
         "A tenant with the same name or domain already exists.",
         ErrorType.Failure
     );
+    
+    public static readonly Error TenantNotFound = new Error(
+        "TenantNotFound",
+        "The specified tenant was not found.",
+        ErrorType.NotFound
+    );
 }

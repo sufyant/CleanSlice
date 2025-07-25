@@ -1,6 +1,8 @@
 ﻿using CleanSlice.Application.Abstractions.Data;
+using CleanSlice.Application.Abstractions.Repositories.Management;
 using CleanSlice.Persistence.Contexts;
 using CleanSlice.Persistence.Factories;
+using CleanSlice.Persistence.TenantManagement.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,29 +17,30 @@ public static class DependencyInjection
 
         var tenantCatalogDbConnectionString = configuration.GetConnectionString("TenantCatalog") ??
                                               throw new ArgumentNullException(nameof(configuration));
-        
+
         services.AddDbContext<TenantCatalogDbContext>(options =>
             options.UseNpgsql(tenantCatalogDbConnectionString).UseSnakeCaseNamingConvention());
 
         #endregion
-        
+
         #region Application DbContext
-        
+
         var applicationDbConnectionString = configuration.GetConnectionString("Tenant") ??
                                             throw new ArgumentNullException(nameof(configuration));
 
-        services.AddDbContext<ApplicationDbContext>(options => 
+        services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(applicationDbConnectionString).UseSnakeCaseNamingConvention());
 
-        services.AddScoped<IApplicationDbContext>(sp => 
+        services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
-        
+
         #endregion
-        
-        services.AddSingleton<IDbConnectionFactory>(_ => 
+
+        services.AddSingleton<IDbConnectionFactory>(_ =>
             new DbConnectionFactory(applicationDbConnectionString));
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+        services.AddScoped<ITenantManagementRepository, TenantManagementRepository>();
 
         return services;
     }

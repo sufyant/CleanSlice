@@ -24,7 +24,13 @@ public sealed class TenantManagementRepository(TenantCatalogDbContext context) :
         await context.Tenants.AddAsync(tenant, cancellationToken);
         return tenant;
     }
-    
+
+    public async Task<Tenant> UpdateTenantAsync(Tenant tenant, CancellationToken cancellationToken = default)
+    {
+        context.Tenants.Update(tenant);
+        return await Task.FromResult(tenant);
+    }
+
     public async Task<Tenant> DeactivateTenantAsync(Tenant tenant, CancellationToken cancellationToken = default)
     {
         context.Tenants.Update(tenant);

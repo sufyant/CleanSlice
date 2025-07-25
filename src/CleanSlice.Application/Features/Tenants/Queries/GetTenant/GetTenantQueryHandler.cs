@@ -3,6 +3,7 @@ using CleanSlice.Application.Abstractions.Repositories.Management;
 using CleanSlice.Application.Features.Tenants.DTOs;
 using CleanSlice.Domain.Tenants;
 using CleanSlice.Shared.Results;
+using CleanSlice.Shared.Results.Errors;
 
 namespace CleanSlice.Application.Features.Tenants.Queries.GetTenant;
 
@@ -17,7 +18,7 @@ public sealed class GetTenantQueryHandler(
 
         if (tenant is null)
         {
-            return TenantErrors.TenantNotFound;
+            return TenantErrors.NotFound;
         }
 
         var response = new TenantDto(

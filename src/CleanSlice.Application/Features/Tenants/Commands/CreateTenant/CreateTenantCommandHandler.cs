@@ -2,6 +2,7 @@
 using CleanSlice.Application.Abstractions.Repositories.Management;
 using CleanSlice.Domain.Tenants;
 using CleanSlice.Shared.Results;
+using CleanSlice.Shared.Results.Errors;
 
 namespace CleanSlice.Application.Features.Tenants.Commands.CreateTenant;
 
@@ -22,12 +23,12 @@ internal sealed class CreateTenantCommandHandler(
 
         if (await tenantManagementRepository.ExistsByNameAsync(tenant.Name, cancellationToken))
         {
-            return TenantErrors.TenantAlreadyExists;
+            return TenantErrors.AlreadyExists;
         }
         
         if (await tenantManagementRepository.ExistsBySlugAsync(tenant.Slug, cancellationToken))
         {
-            return TenantErrors.TenantAlreadyExists;
+            return TenantErrors.AlreadyExists;
         }
 
         tenant = await tenantManagementRepository.CreateTenantAsync(tenant, cancellationToken);

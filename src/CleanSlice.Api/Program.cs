@@ -17,12 +17,37 @@ builder.Services.AddPersistence(builder.Configuration);
 
 var app = builder.Build();
 
-app.MapOpenApi();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapScalarApiReference();
+    app.MapOpenApi(pattern: "api/document.json");
+    app.MapScalarApiReference(options =>
+    {
+        options.OpenApiRoutePattern = "api/document.json";
+        options.ShowSidebar = true;
+        options.Title = "CleanSlice API";
+        options.Theme = ScalarTheme.BluePlanet;
+        options.Favicon = "/favicon.svg";
+        options.Layout = ScalarLayout.Modern;
+        options.DarkMode = true;
+        options.CustomCss = "* { font-family: 'Monaco'; }";
+        options.DefaultHttpClient = new(ScalarTarget.JavaScript, ScalarClient.Axios);
+        options.Servers = new List<ScalarServer>()
+        {
+            new ScalarServer("https://localhost:7100"),
+            new ScalarServer("http://localhost:5100"),
+        };
+        options.Metadata = new Dictionary<string, string>()
+        {
+            { "ogDescription", "Open Graph description" },
+            { "ogTitle", "Open Graph title" },
+            { "twitterCard", "summary_large_image" },
+            { "twitterSite", "https://example.com/api" },
+            { "twitterTitle", "My Api documentation" },
+            { "twitterDescription", "This is the description for the twitter card" },
+            { "twitterImage", "https://dotnet.microsoft.com/blob-assets/images/illustrations/swimlane-build-scalable-web-apps.svg" }
+        };
+    });
 }
 
 app.Run();

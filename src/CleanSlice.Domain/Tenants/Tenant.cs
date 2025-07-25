@@ -42,6 +42,20 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
         return tenant;
     }
+    
+    public void Update(Guid id, string name, string domain, string slug, string connectionString)
+    {
+        if (IsDeleted)
+            throw new BusinessRuleViolationException("Cannot update deleted tenant");
+
+        if (id != Id)
+            throw new ValidationException(nameof(id), "Tenant ID mismatch");
+        
+        UpdateName(name);
+        UpdateDomain(domain);
+        UpdateSlug(slug);
+        UpdateConnectionString(connectionString);
+    }
 
     public void UpdateName(string name)
     {

@@ -18,6 +18,7 @@ namespace CleanSlice.Api.Controllers;
 [Authorize]
 [Route("v{version:apiVersion}/tenants")]
 [Tags("Tenant Management")]
+[Produces("application/json")]
 public class TenantsController(ISender sender, IMapper mapper) : BaseController
 {
     [HttpGet]

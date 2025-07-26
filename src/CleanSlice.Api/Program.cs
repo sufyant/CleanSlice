@@ -15,9 +15,24 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors();
+
+app.MapControllers();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi(pattern: "api/document.json");
@@ -34,8 +49,7 @@ if (app.Environment.IsDevelopment())
         options.DefaultHttpClient = new(ScalarTarget.JavaScript, ScalarClient.Axios);
         options.Servers = new List<ScalarServer>()
         {
-            new ScalarServer("https://localhost:7100"),
-            new ScalarServer("http://localhost:5100"),
+            new ScalarServer("http://localhost:7100"),
         };
         options.Metadata = new Dictionary<string, string>()
         {

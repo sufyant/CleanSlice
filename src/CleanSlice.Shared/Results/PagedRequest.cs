@@ -1,6 +1,6 @@
 namespace CleanSlice.Shared.Results;
 
-public abstract class PagedRequest
+public class PagedRequest
 {
     private const int MaxPageSize = 100;
     private int _pageSize = 10;

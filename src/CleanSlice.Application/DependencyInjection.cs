@@ -13,14 +13,14 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
 
             // 1. Logging & Exception Handling
-            config.AddOpenBehavior(typeof(ExceptionHandlingBehavior<,>));
+            // config.AddOpenBehavior(typeof(ExceptionHandlingBehavior<,>));
             config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 
             // 2. Validation
             config.AddOpenBehavior(typeof(ValidationBehavior<,>));
 
             // 3. Caching
-            config.AddOpenBehavior(typeof(CachingBehavior<,>));
+            // config.AddOpenBehavior(typeof(CachingBehavior<,>));
 
             // 4. Transaction
             config.AddOpenBehavior(typeof(TransactionalBehavior<,>));

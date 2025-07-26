@@ -8,14 +8,12 @@ using CleanSlice.Shared.Contracts.Tenants.Requests;
 using CleanSlice.Shared.Contracts.Tenants.Responses;
 using CleanSlice.Shared.Results;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanSlice.Api.Controllers;
 
 [ApiController]
 [ApiVersion(ApiVersions.V1)]
-[Authorize]
 [Route("v{version:apiVersion}/tenants")]
 [Tags("Tenant Management")]
 [Produces("application/json")]

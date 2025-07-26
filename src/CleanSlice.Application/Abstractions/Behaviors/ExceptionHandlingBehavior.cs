@@ -66,7 +66,7 @@ internal sealed class ExceptionHandlingBehavior<TRequest, TResponse>(
         // Check if TResponse is Result or Result<T>
         if (typeof(TResponse) == typeof(Result))
         {
-            return (TResponse)(object)error;
+            return (TResponse)(object)Result.Failure(error);
         }
 
         if (typeof(TResponse).IsGenericType &&

@@ -1,7 +1,9 @@
 ﻿using CleanSlice.Application.Abstractions.Data;
+using CleanSlice.Application.Abstractions.Repositories;
 using CleanSlice.Application.Abstractions.Repositories.Management;
 using CleanSlice.Persistence.Contexts;
 using CleanSlice.Persistence.Factories;
+using CleanSlice.Persistence.Repositories;
 using CleanSlice.Persistence.TenantManagement.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +43,11 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
         services.AddScoped<ITenantManagementRepository, TenantManagementRepository>();
+
+        // User management repositories
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
 
         return services;
     }

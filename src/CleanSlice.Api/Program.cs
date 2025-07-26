@@ -1,4 +1,5 @@
 using CleanSlice.Api.Extensions;
+using CleanSlice.Api.Middleware;
 using CleanSlice.Application;
 using CleanSlice.Infrastructure;
 using CleanSlice.Persistence;
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddPresentation();
+builder.Services.AddPresentation(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddPersistence(builder.Configuration);
@@ -30,6 +31,11 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.MapControllers();
 

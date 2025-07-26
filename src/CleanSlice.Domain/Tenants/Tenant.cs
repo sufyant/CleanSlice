@@ -45,7 +45,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
     public void Update(Guid id, string name, string domain, string slug, string connectionString)
     {
-        if (IsDeleted)
+        if (IsActive)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
 
         if (id != Id)
@@ -61,7 +61,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
     private void UpdateName(string name)
     {
-        if (IsDeleted)
+        if (IsActive)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
 
         if (string.IsNullOrWhiteSpace(name))
@@ -72,7 +72,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
     private void UpdateDomain(string domain)
     {
-        if (IsDeleted)
+        if (IsActive)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
 
         if (string.IsNullOrWhiteSpace(domain))
@@ -83,7 +83,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
     private void UpdateSlug(string slug)
     {
-        if (IsDeleted)
+        if (IsActive)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
 
         if (string.IsNullOrWhiteSpace(slug))
@@ -94,7 +94,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
 
     private void UpdateConnectionString(string connectionString)
     {
-        if (IsDeleted)
+        if (IsActive)
             throw new BusinessRuleViolationException("Cannot update deleted tenant");
 
         if (string.IsNullOrWhiteSpace(connectionString))

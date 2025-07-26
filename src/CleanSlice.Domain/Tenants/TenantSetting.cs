@@ -31,7 +31,7 @@ public sealed class TenantSetting : AuditableTenantEntityWithSoftDelete
 
     public void UpdateValue(string value)
     {
-        if (IsDeleted)
+        if (IsActive)
             throw new BusinessRuleViolationException("Cannot update deleted tenant setting");
 
         if (string.IsNullOrWhiteSpace(value))

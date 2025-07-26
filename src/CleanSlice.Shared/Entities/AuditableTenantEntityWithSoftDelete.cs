@@ -10,18 +10,18 @@ public class AuditableTenantEntityWithSoftDelete : TenantBaseEntity, IAuditableE
     public DateTimeOffset? LastModifiedAt { get; protected set; }
     public DateTimeOffset? DeletedAt { get; protected set; }
     public Guid? DeletedBy { get; protected set; }
-    protected bool IsDeleted => DeletedAt.HasValue;
+    public bool IsActive => DeletedAt.HasValue;
 
     public void MarkAsDeleted(Guid deletedBy)
     {
-        if (IsDeleted) return;
+        if (IsActive) return;
         DeletedAt = DateTimeOffset.UtcNow;
         DeletedBy = deletedBy;
     }
 
     public void Restore()
     {
-        if (!IsDeleted) return;
+        if (!IsActive) return;
         DeletedAt = null;
         DeletedBy = null;
     }

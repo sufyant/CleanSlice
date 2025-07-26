@@ -1,15 +1,21 @@
 ﻿using CleanSlice.Application.Abstractions.Authentication;
 using CleanSlice.Application.Abstractions.Data;
+using CleanSlice.Domain.Users;
 using CleanSlice.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanSlice.Persistence.Contexts;
 
 public sealed class ApplicationDbContext(
-    DbContextOptions<ApplicationDbContext> options, 
+    DbContextOptions<ApplicationDbContext> options,
     IUserContext userContext)
     : DbContext(options), IApplicationDbContext
 {
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Apply configurations from the assembly

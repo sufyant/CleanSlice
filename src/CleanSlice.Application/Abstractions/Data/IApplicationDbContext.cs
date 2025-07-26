@@ -1,7 +1,13 @@
-﻿namespace CleanSlice.Application.Abstractions.Data;
+﻿using CleanSlice.Domain.Users;
+using Microsoft.EntityFrameworkCore;
+
+namespace CleanSlice.Application.Abstractions.Data;
 
 public interface IApplicationDbContext
 {
-    // Add methods and properties that are common to your application's database context.
-    // DbSet<User> Users { get; }
+    DbSet<User> Users { get; }
+    DbSet<Role> Roles { get; }
+    DbSet<Permission> Permissions { get; }
+    DbSet<UserRole> UserRoles { get; }
+    DbSet<RolePermission> RolePermissions { get; }
 }

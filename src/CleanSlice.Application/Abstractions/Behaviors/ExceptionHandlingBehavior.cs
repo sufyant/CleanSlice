@@ -80,7 +80,7 @@ internal sealed class ExceptionHandlingBehavior<TRequest, TResponse>(
 
             if (failureMethod is not null)
             {
-                return (TResponse)failureMethod.Invoke(null, new object[] { error })!;
+                return (TResponse)failureMethod.Invoke(null, [error])!;
             }
         }
 

@@ -1,10 +1,10 @@
 ﻿using CleanSlice.Shared.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CleanSlice.Persistence.TenantManagement.Configurations.Base;
+namespace CleanSlice.Persistence.Configurations.Base.Base;
 
-public abstract class AuditableEntityConfiguration<T> : BaseEntityConfiguration<T> 
-    where T : AuditableEntity
+public abstract class AuditableEntityWithSoftDeleteConfiguration<T> : BaseEntityConfiguration<T> 
+    where T : AuditableEntityWithSoftDelete 
 {
     public override void Configure(EntityTypeBuilder<T> builder)
     {
@@ -14,5 +14,7 @@ public abstract class AuditableEntityConfiguration<T> : BaseEntityConfiguration<
         builder.Property(e => e.CreatedAt).IsRequired();
         builder.Property(e => e.LastModifiedBy);
         builder.Property(e => e.LastModifiedAt);
+        builder.Property(e => e.DeletedAt);
+        builder.Property(e => e.DeletedBy);
     }
 }

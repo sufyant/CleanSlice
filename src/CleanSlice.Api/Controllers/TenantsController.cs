@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using AutoMapper;
+using CleanSlice.Api.Authorization;
 using CleanSlice.Application.Features.Tenants.Commands.CreateTenant;
 using CleanSlice.Application.Features.Tenants.Commands.UpdateTenant;
 using CleanSlice.Application.Features.Tenants.Queries.GetTenant;
@@ -20,6 +21,7 @@ namespace CleanSlice.Api.Controllers;
 public class TenantsController(ISender sender, IMapper mapper) : BaseController
 {
     [HttpGet]
+    [HasPermission("TENANTS.READ")]
     [ProducesResponseType(typeof(PagedResult<TenantResponse>), StatusCodes.Status200OK)]
     [EndpointSummary("Get Tenants")]
     [EndpointDescription("Get tenants with pagination and optional search")]
@@ -36,6 +38,7 @@ public class TenantsController(ISender sender, IMapper mapper) : BaseController
 
     [HttpGet]
     [Route("{tenantId:guid}")]
+    [HasPermission("TENANTS.READ")]
     [ProducesResponseType(typeof(TenantResponse), StatusCodes.Status200OK)]
     [EndpointSummary("Get Tenant by ID")]
     [EndpointDescription("Get a tenant by its ID")]
@@ -51,6 +54,7 @@ public class TenantsController(ISender sender, IMapper mapper) : BaseController
     }
 
     [HttpPost]
+    [HasPermission("TENANTS.WRITE")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [EndpointSummary("Create Tenant")]
     [EndpointDescription("Create a new tenant")]
@@ -65,6 +69,7 @@ public class TenantsController(ISender sender, IMapper mapper) : BaseController
     }
 
     [HttpPut]
+    [HasPermission("TENANTS.WRITE")]
     [EndpointSummary("Update Tenant")]
     [EndpointDescription("Update an existing tenant")]
     public async Task<IActionResult> UpdateTenant([FromBody] UpdateTenantRequest request, CancellationToken cancellationToken)

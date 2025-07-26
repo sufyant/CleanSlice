@@ -1,6 +1,9 @@
 ﻿using Asp.Versioning;
+using CleanSlice.Api.Authorization;
 using CleanSlice.Api.Infrastructure;
+using CleanSlice.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -8,24 +11,49 @@ namespace CleanSlice.Api.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpContextAccessor();
         services.AddControllers();
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-        
+
+        var authOptions = configuration.GetSection("Authentication");
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(o =>
             {
-                o.RequireHttpsMetadata = false;
-                o.Audience = "account";
-                o.MetadataAddress = "http://localhost:8080/realms/sample-realm/.well-known/openid-configuration";
+                o.RequireHttpsMetadata = authOptions.GetValue<bool>("RequireHttpsMetadata");
+                o.Audience = authOptions.GetValue<string>("Audience");
+                o.MetadataAddress = authOptions.GetValue<string>("MetadataUrl");
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = "http://localhost:8080/realms/sample-realm"
+                    ValidIssuer = authOptions.GetValue<string>("ValidIssuer"),
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
+
+        services.AddAuthorization(options =>
+        {
+            // Fallback policy - tüm endpoint'ler authentication gerektirir
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            // Permission-based policy provider
+            options.AddPolicy("Permission", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.Requirements.Add(new PermissionRequirement(string.Empty));
+            });
+        });
+
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 
         services.AddControllers();
         services.AddOpenApi(options =>

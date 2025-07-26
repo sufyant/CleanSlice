@@ -4,7 +4,7 @@ namespace CleanSlice.Shared.Entities;
 
 public abstract class BaseEntity
 {
-    private readonly List<IDomainEvent> _domainEvents = new();
+    private readonly List<IDomainEvent> _domainEvents = [];
 
     public Guid Id { get; protected init; }
     

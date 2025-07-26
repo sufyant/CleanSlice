@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CleanSlice.Persistence.TenantManagement.Configurations.Base;
+namespace CleanSlice.Persistence.Configurations.Base.Base;
 
 public abstract class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T> 
     where T : BaseEntity

@@ -36,7 +36,47 @@ internal static class ClaimsPrincipalExtensions
 
     public static string GetName(this ClaimsPrincipal? principal)
     {
-        return principal?.FindFirstValue(ClaimTypes.Name) ?? 
+        return principal?.FindFirstValue(ClaimTypes.Name) ??
                throw new AuthenticationException("Name is unavailable");
+    }
+
+    public static IEnumerable<string> GetRoles(this ClaimsPrincipal? principal)
+    {
+        if (principal == null)
+            return [];
+
+        // Try to get roles from realm_access claim (Keycloak format)
+        var realmAccessClaim = principal.FindFirstValue("realm_access");
+        if (!string.IsNullOrEmpty(realmAccessClaim))
+        {
+            try
+            {
+                var realmAccess = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(realmAccessClaim);
+                if (realmAccess != null && realmAccess.TryGetValue("roles", out var rolesObj))
+                {
+                    var rolesElement = (System.Text.Json.JsonElement)rolesObj;
+                    if (rolesElement.ValueKind == System.Text.Json.JsonValueKind.Array)
+                    {
+                        return rolesElement.EnumerateArray().Select(r => r.GetString()).Where(r => !string.IsNullOrEmpty(r))!;
+                    }
+                }
+            }
+            catch
+            {
+                // Fall back to standard role claims
+            }
+        }
+
+        // Fall back to standard role claims
+        return principal.FindAll(ClaimTypes.Role).Select(c => c.Value);
+    }
+
+    public static IEnumerable<string> GetPermissions(this ClaimsPrincipal? principal)
+    {
+        if (principal == null)
+            return [];
+
+        // Get permissions from custom claims
+        return principal.FindAll("permission").Select(c => c.Value);
     }
 }

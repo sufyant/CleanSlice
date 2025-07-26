@@ -40,4 +40,26 @@ internal sealed class UserContext(IHttpContextAccessor httpContextAccessor) : IU
             .User
             .GetName() ??
         throw new AuthenticationException("User context is unavailable");
+
+    public IEnumerable<string> Roles =>
+        httpContextAccessor
+            .HttpContext?
+            .User
+            .GetRoles() ?? [];
+
+    public IEnumerable<string> Permissions =>
+        httpContextAccessor
+            .HttpContext?
+            .User
+            .GetPermissions() ?? [];
+
+    public bool HasRole(string role)
+    {
+        return Roles.Contains(role, StringComparer.OrdinalIgnoreCase);
+    }
+
+    public bool HasPermission(string permission)
+    {
+        return Permissions.Contains(permission, StringComparer.OrdinalIgnoreCase);
+    }
 }

@@ -8,7 +8,10 @@
 
     <ItemGroup>
         <!-- Api Layer -->
+        <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
+        <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
         <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7"  />
         <PackageReference Include="Scalar.AspNetCore" Version="2.6.4" />
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
@@ -17,10 +20,11 @@
     
     <ItemGroup>
         <!-- Application Layer -->
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+        <PackageReference Include="AutoMapper" Version="15.0.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageReference Include="MediatR" Version="13.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
         <PackageReference Include="Serilog" Version="4.3.0" />
         <PackageReference Include="System.Data.Common" Version="4.3.0" />
     </ItemGroup>

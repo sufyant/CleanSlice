@@ -45,7 +45,7 @@ internal static class ClaimsPrincipalExtensions
         if (principal == null)
             return [];
 
-        // Try to get roles from realm_access claim (Keycloak format)
+        // Try to get roles from realm_access claim (Azure Entra ID format)
         var realmAccessClaim = principal.FindFirstValue("realm_access");
         if (!string.IsNullOrEmpty(realmAccessClaim))
         {

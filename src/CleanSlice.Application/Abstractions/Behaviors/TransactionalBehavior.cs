@@ -33,7 +33,7 @@ internal sealed class TransactionalBehavior<TRequest, TResponse>(
         {
             TResponse response = await next(cancellationToken);
 
-            transaction.Commit();
+            await unitOfWork.CommitTransactionAsync(cancellationToken);
 
             logger.LogInformation("Transaction committed for {RequestName}", requestName);
 
@@ -41,7 +41,7 @@ internal sealed class TransactionalBehavior<TRequest, TResponse>(
         }
         catch
         {
-            transaction.Rollback();
+            await unitOfWork.RollbackTransactionAsync(cancellationToken);
 
             logger.LogWarning("Transaction rolled back for {RequestName}", requestName);
 

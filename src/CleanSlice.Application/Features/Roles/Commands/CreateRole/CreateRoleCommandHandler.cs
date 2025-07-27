@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Application.Abstractions.Authentication;
-using CleanSlice.Application.Abstractions.Keycloak;
+
 using CleanSlice.Application.Abstractions.Messaging;
 using CleanSlice.Application.Abstractions.Repositories;
 using CleanSlice.Application.Features.Roles.DTOs;
@@ -12,7 +12,6 @@ namespace CleanSlice.Application.Features.Roles.Commands.CreateRole;
 internal sealed class CreateRoleCommandHandler(
     IRoleRepository roleRepository,
     IPermissionRepository permissionRepository,
-    IKeycloakService keycloakService,
     IUserContext userContext
     ) : ICommandHandler<CreateRoleCommand, RoleDto>
 {
@@ -24,12 +23,7 @@ internal sealed class CreateRoleCommandHandler(
             return RoleErrors.NameAlreadyExists;
         }
 
-        // Create role in Keycloak first
-        var keycloakSuccess = await keycloakService.CreateRoleAsync(request.Name, request.Description, cancellationToken);
-        if (!keycloakSuccess)
-        {
-            return RoleErrors.FailedToCreateInKeycloak;
-        }
+        // Note: Azure Entra ID role creation will be handled separately if needed
 
         // Create role in our domain
         var role = Role.Create(

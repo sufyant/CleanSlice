@@ -1,5 +1,4 @@
-﻿using CleanSlice.Application.Abstractions.Authorization;
-using CleanSlice.Infrastructure.Authentication;
+﻿using CleanSlice.Infrastructure.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using IAuthorizationService = CleanSlice.Application.Abstractions.Authorization.IAuthorizationService;

@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Application.Abstractions.Authentication;
-using CleanSlice.Application.Abstractions.Keycloak;
+
 using CleanSlice.Application.Abstractions.Messaging;
 using CleanSlice.Application.Abstractions.Repositories;
 using CleanSlice.Application.Features.Users.DTOs;
@@ -12,7 +12,6 @@ namespace CleanSlice.Application.Features.Users.Commands.CreateUser;
 internal sealed class CreateUserCommandHandler(
     IUserRepository userRepository,
     IRoleRepository roleRepository,
-    IKeycloakService keycloakService,
     IUserContext userContext
     ) : ICommandHandler<CreateUserCommand, UserDto>
 {
@@ -24,25 +23,9 @@ internal sealed class CreateUserCommandHandler(
             return UserErrors.EmailAlreadyExists;
         }
 
-        // Create user in Keycloak first
-        var keycloakSuccess = await keycloakService.CreateUserAsync(
-            request.Email, 
-            request.FirstName, 
-            request.LastName, 
-            request.Password, 
-            cancellationToken);
-
-        if (!keycloakSuccess)
-        {
-            return UserErrors.FailedToCreateInKeycloak;
-        }
-
-        // Get the Keycloak user ID
-        var identityId = await keycloakService.GetUserIdByEmailAsync(request.Email, cancellationToken);
-        if (string.IsNullOrEmpty(identityId))
-        {
-            return UserErrors.FailedToGetKeycloakUserId;
-        }
+        // Note: Azure Entra ID user creation will be handled via invitation flow
+        // For now, we'll use a placeholder identity ID that will be updated during sync
+        var identityId = Guid.NewGuid().ToString(); // Temporary ID, will be replaced with Azure ID
 
         // Create user in our domain
         var user = User.Create(
@@ -60,9 +43,7 @@ internal sealed class CreateUserCommandHandler(
             if (role != null)
             {
                 user.AssignRole(role);
-                
-                // Also assign role in Keycloak
-                await keycloakService.AssignRoleToUserAsync(identityId, roleName, cancellationToken);
+                // Note: Azure Entra ID role assignment will be handled separately
             }
         }
 

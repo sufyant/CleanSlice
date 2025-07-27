@@ -13,22 +13,6 @@ internal sealed class BearerSecuritySchemeTransformer(IAuthenticationSchemeProvi
             {
                 var securitySchemes = new Dictionary<string, OpenApiSecurityScheme>
                 {
-                    ["Keycloak"] = new OpenApiSecurityScheme
-                    {
-                        Type = SecuritySchemeType.OAuth2,
-                        Flows = new OpenApiOAuthFlows
-                        {
-                            Implicit = new OpenApiOAuthFlow
-                            {
-                                AuthorizationUrl = new Uri("http://localhost:8080/realms/sample-realm/protocol/openid-connect/auth"),
-                                Scopes = new Dictionary<string, string>
-                               {
-                                   { "openid", "openid" },
-                                   { "profile", "profile" }
-                               }
-                            }
-                        }
-                    },
                     ["Bearer"] = new OpenApiSecurityScheme
                     {
                         Type = SecuritySchemeType.Http,
@@ -41,20 +25,6 @@ internal sealed class BearerSecuritySchemeTransformer(IAuthenticationSchemeProvi
 
                 var securityRequirement = new OpenApiSecurityRequirement
                {
-                   {
-                       new OpenApiSecurityScheme
-                       {
-                           Reference = new OpenApiReference
-                           {
-                               Id = "Keycloak",
-                               Type = ReferenceType.SecurityScheme
-                           },
-                           In = ParameterLocation.Header,
-                           Name = "Bearer",
-                           Scheme = "Bearer"
-                       },
-                       []
-                   },
                    {
                        new OpenApiSecurityScheme
                        {

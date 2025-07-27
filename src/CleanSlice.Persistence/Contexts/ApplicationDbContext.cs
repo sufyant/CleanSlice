@@ -16,6 +16,8 @@ public sealed class ApplicationDbContext(
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<Invitation> Invitations => Set<Invitation>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Apply configurations from the assembly

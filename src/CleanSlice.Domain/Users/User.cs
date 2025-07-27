@@ -7,7 +7,7 @@ namespace CleanSlice.Domain.Users;
 
 public sealed class User : AuditableTenantEntityWithSoftDelete
 {
-    public string IdentityId { get; private set; } = string.Empty; // Keycloak user ID
+    public string IdentityId { get; private set; } = string.Empty; // Azure Entra ID user ID
     public Email Email { get; private set; } = null!;
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;

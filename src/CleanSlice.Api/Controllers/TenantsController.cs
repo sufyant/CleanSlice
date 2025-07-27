@@ -9,6 +9,7 @@ using CleanSlice.Shared.Contracts.Tenants.Requests;
 using CleanSlice.Shared.Contracts.Tenants.Responses;
 using CleanSlice.Shared.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanSlice.Api.Controllers;
@@ -18,6 +19,7 @@ namespace CleanSlice.Api.Controllers;
 [Route("v{version:apiVersion}/tenants")]
 [Tags("Tenant Management")]
 [Produces("application/json")]
+[Authorize]
 public class TenantsController(ISender sender, IMapper mapper) : BaseController
 {
     [HttpGet]

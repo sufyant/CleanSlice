@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Domain.Users;
-using CleanSlice.Persistence.Configurations.Base.Base;
+using CleanSlice.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +13,7 @@ internal sealed class PermissionConfiguration : AuditableEntityConfiguration<Per
 
         builder.ToTable("permissions");
 
+        // PermissionName value object
         builder.OwnsOne(p => p.Name, nameBuilder =>
         {
             nameBuilder.Property(n => n.Value)
@@ -23,17 +24,21 @@ internal sealed class PermissionConfiguration : AuditableEntityConfiguration<Per
 
         builder.Property(p => p.Description)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(500)
+            .HasColumnName("description");
 
         builder.Property(p => p.Category)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(100)
+            .HasColumnName("category");
 
         // Indexes
         builder.HasIndex(p => p.Name.Value)
-            .IsUnique();
+            .IsUnique()
+            .HasDatabaseName("IX_Permissions_Name");
 
-        builder.HasIndex(p => p.Category);
+        builder.HasIndex(p => p.Category)
+            .HasDatabaseName("IX_Permissions_Category");
 
         // Relationships
         builder.HasMany(p => p.RolePermissions)

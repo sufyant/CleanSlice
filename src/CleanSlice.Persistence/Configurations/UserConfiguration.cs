@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Domain.Users;
-using CleanSlice.Persistence.Configurations.Base.Base;
+using CleanSlice.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

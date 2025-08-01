@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Domain.Users;
-using CleanSlice.Persistence.Configurations.Base.Base;
+using CleanSlice.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +13,7 @@ internal sealed class RoleConfiguration : AuditableTenantEntityWithSoftDeleteCon
 
         builder.ToTable("roles");
 
+        // RoleName value object
         builder.OwnsOne(r => r.Name, nameBuilder =>
         {
             nameBuilder.Property(n => n.Value)
@@ -23,14 +24,20 @@ internal sealed class RoleConfiguration : AuditableTenantEntityWithSoftDeleteCon
 
         builder.Property(r => r.Description)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(500)
+            .HasColumnName("description");
 
         builder.Property(r => r.IsSystemRole)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("is_system_role");
 
         // Indexes
         builder.HasIndex(r => new { r.TenantId, r.Name.Value })
-            .IsUnique();
+            .IsUnique()
+            .HasDatabaseName("IX_Roles_TenantId_Name");
+
+        builder.HasIndex(r => r.TenantId)
+            .HasDatabaseName("IX_Roles_TenantId");
 
         // Relationships
         builder.HasMany(r => r.UserRoles)

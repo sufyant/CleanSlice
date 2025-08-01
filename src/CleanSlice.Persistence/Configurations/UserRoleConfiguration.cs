@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Domain.Users;
-using CleanSlice.Persistence.Configurations.Base.Base;
+using CleanSlice.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,21 +14,28 @@ internal sealed class UserRoleConfiguration : BaseEntityConfiguration<UserRole>
         builder.ToTable("user_roles");
 
         builder.Property(ur => ur.UserId)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("user_id");
 
         builder.Property(ur => ur.RoleId)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("role_id");
 
         builder.Property(ur => ur.TenantId)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("tenant_id");
 
         builder.Property(ur => ur.AssignedAt)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("assigned_at");
 
-        // Composite unique index - User can have same role only once per tenant
+        // Indexes
         builder.HasIndex(ur => new { ur.UserId, ur.RoleId, ur.TenantId })
             .IsUnique()
-            .HasDatabaseName("IX_UserRoles_User_Role_Tenant");
+            .HasDatabaseName("IX_UserRoles_UserId_RoleId_TenantId");
+
+        builder.HasIndex(ur => new { ur.UserId, ur.TenantId })
+            .HasDatabaseName("IX_UserRoles_UserId_TenantId");
 
         // Relationships
         builder.HasOne(ur => ur.User)

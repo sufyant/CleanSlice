@@ -18,7 +18,10 @@ internal sealed class InvitationRepository(ApplicationDbContext dbContext) : Bas
     {
         return await dbContext.Invitations
             .AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Email.Value == email && i.TenantId == tenantId && !i.IsUsed, cancellationToken);
+            .FirstOrDefaultAsync(i => i.Email.Value == email &&
+                                    i.TenantId == tenantId &&
+                                    !i.IsUsed &&
+                                    !i.IsExpired, cancellationToken);
     }
 
     public async Task<IEnumerable<Invitation>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
@@ -33,7 +36,7 @@ internal sealed class InvitationRepository(ApplicationDbContext dbContext) : Bas
     {
         return await dbContext.Invitations
             .AsNoTracking()
-            .Where(i => i.ExpiresAt < DateTimeOffset.UtcNow)
+            .Where(i => i.IsExpired)
             .ToListAsync(cancellationToken);
     }
 }

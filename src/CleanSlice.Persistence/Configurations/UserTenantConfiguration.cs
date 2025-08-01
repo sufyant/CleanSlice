@@ -1,5 +1,5 @@
 ﻿using CleanSlice.Domain.Users;
-using CleanSlice.Persistence.Configurations.Base.Base;
+using CleanSlice.Persistence.Configurations.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,23 +14,28 @@ internal sealed class UserTenantConfiguration : AuditableEntityConfiguration<Use
         builder.ToTable("user_tenants");
 
         builder.Property(ut => ut.UserId)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("user_id");
 
         builder.Property(ut => ut.TenantId)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("tenant_id");
 
         builder.Property(ut => ut.IsPrimary)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("is_primary");
 
         builder.Property(ut => ut.JoinedAt)
-            .IsRequired();
+            .IsRequired()
+            .HasColumnName("joined_at");
 
         // Indexes
         builder.HasIndex(ut => new { ut.UserId, ut.TenantId })
-            .IsUnique();
+            .IsUnique()
+            .HasDatabaseName("IX_UserTenants_UserId_TenantId");
 
         builder.HasIndex(ut => new { ut.UserId, ut.IsPrimary })
-            .HasFilter("is_primary = true"); // Only one primary tenant per user
+            .HasDatabaseName("IX_UserTenants_UserId_IsPrimary");
 
         // Relationships
         builder.HasOne(ut => ut.User)
@@ -42,7 +47,5 @@ internal sealed class UserTenantConfiguration : AuditableEntityConfiguration<Use
             .WithMany()
             .HasForeignKey(ut => ut.TenantId)
             .OnDelete(DeleteBehavior.Cascade);
-
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CleanSlice.Application.Abstractions.Repositories;
+using CleanSlice.Domain.Common.Enums;
 using CleanSlice.Domain.Users;
 using CleanSlice.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -7,11 +8,12 @@ namespace CleanSlice.Persistence.Repositories;
 
 internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepository<User>(dbContext), IUserRepository
 {
-    public async Task<User?> GetByIdentityIdAsync(string identityId, CancellationToken cancellationToken = default)
+    public async Task<User?> GetByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.IdentityId == identityId, cancellationToken);
+            .FirstOrDefaultAsync(u => u.ExternalIdentityId.Value == externalIdentityId &&
+                                    u.ExternalIdentityId.Provider == provider, cancellationToken);
     }
 
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
@@ -25,13 +27,21 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
     {
         return await dbContext.Users
             .AsNoTracking()
-            .Where(u => u.TenantId == tenantId)
+            .Where(u => u.UserTenants.Any(ut => ut.TenantId == tenantId))
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<User?> GetWithRolesAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<User?> GetWithTenantsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
+            .Include(u => u.UserTenants)
+            .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+    }
+
+    public async Task<User?> GetWithTenantsAndRolesAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .Include(u => u.UserTenants)
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
                     .ThenInclude(r => r.RolePermissions)
@@ -39,11 +49,12 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<User>> GetUsersWithRoleAsync(Guid roleId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<User>> GetUsersWithRoleInTenantAsync(Guid roleId, Guid tenantId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
             .AsNoTracking()
-            .Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId))
+            .Where(u => u.UserTenants.Any(ut => ut.TenantId == tenantId) &&
+                       u.UserRoles.Any(ur => ur.RoleId == roleId && ur.TenantId == tenantId))
             .ToListAsync(cancellationToken);
     }
 
@@ -53,9 +64,10 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
             .AnyAsync(u => u.Email.Value == email, cancellationToken);
     }
 
-    public async Task<bool> ExistsByIdentityIdAsync(string identityId, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
-            .AnyAsync(u => u.IdentityId == identityId, cancellationToken);
+            .AnyAsync(u => u.ExternalIdentityId.Value == externalIdentityId &&
+                          u.ExternalIdentityId.Provider == provider, cancellationToken);
     }
 }

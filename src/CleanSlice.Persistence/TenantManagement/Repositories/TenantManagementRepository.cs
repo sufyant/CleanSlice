@@ -18,9 +18,9 @@ public sealed class TenantManagementRepository(TenantCatalogDbContext context) :
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             query = query.Where(t =>
-                t.Name.Contains(searchTerm) ||
-                t.Slug.Contains(searchTerm) ||
-                t.Domain.Contains(searchTerm)
+                t.Name.Value.Contains(searchTerm) ||
+                t.Slug.Value.Contains(searchTerm) ||
+                t.Domain.Value.Contains(searchTerm)
             );
         }
 
@@ -33,7 +33,7 @@ public sealed class TenantManagementRepository(TenantCatalogDbContext context) :
 
         // Get paged data
         var items = await query
-            .OrderBy(t => t.Name) // Default ordering
+            .OrderBy(t => t.Name.Value) // Default ordering
             .Skip(skip)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
@@ -49,10 +49,10 @@ public sealed class TenantManagementRepository(TenantCatalogDbContext context) :
         await context.Tenants.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
     public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default) =>
-        await context.Tenants.AnyAsync(t => t.Name == name, cancellationToken);
+        await context.Tenants.AnyAsync(t => t.Name.Value == name, cancellationToken);
 
     public async Task<bool> ExistsBySlugAsync(string slug, CancellationToken cancellationToken = default) =>
-        await context.Tenants.AnyAsync(t => t.Slug == slug, cancellationToken);
+        await context.Tenants.AnyAsync(t => t.Slug.Value == slug, cancellationToken);
 
     public async Task<Tenant> CreateTenantAsync(Tenant tenant, CancellationToken cancellationToken = default)
     {

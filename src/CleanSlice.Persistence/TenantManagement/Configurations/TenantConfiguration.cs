@@ -1,4 +1,5 @@
 ﻿using CleanSlice.Domain.Tenants;
+using CleanSlice.Domain.Tenants.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,25 +11,39 @@ public class TenantConfiguration : IEntityTypeConfiguration<Tenant>
     {
         builder.HasKey(t => t.Id);
 
-        builder.Property(t => t.Name)
-            .IsRequired()
-            .HasMaxLength(100);
+        // Value objects configuration
+        builder.OwnsOne(t => t.Name, nameBuilder =>
+        {
+            nameBuilder.Property(n => n.Value)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("name");
+        });
 
-        builder.Property(t => t.Domain)
-            .IsRequired()
-            .HasMaxLength(255);
+        builder.OwnsOne(t => t.Domain, domainBuilder =>
+        {
+            domainBuilder.Property(d => d.Value)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName("domain");
+        });
 
-        builder.Property(t => t.Slug)
-            .IsRequired()
-            .HasMaxLength(100);
+        builder.OwnsOne(t => t.Slug, slugBuilder =>
+        {
+            slugBuilder.Property(s => s.Value)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("slug");
+        });
 
         builder.Property(t => t.ConnectionString)
             .IsRequired()
-            .HasMaxLength(500);
+            .HasMaxLength(500)
+            .HasColumnName("connection_string");
 
         // Unique constraints
-        builder.HasIndex(t => t.Domain).IsUnique();
-        builder.HasIndex(t => t.Slug).IsUnique();
+        builder.HasIndex(t => t.Domain.Value).IsUnique();
+        builder.HasIndex(t => t.Slug.Value).IsUnique();
 
         // Table name
         builder.ToTable("tenants");

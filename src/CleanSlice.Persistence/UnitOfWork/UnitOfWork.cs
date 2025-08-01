@@ -61,7 +61,7 @@ internal sealed class UnitOfWork(ApplicationDbContext dbContext) : IUnitOfWork
                 return domainEvents;
             })
             .Select(domainEvent => OutboxMessage.Create(
-                new Guid(),
+                Guid.NewGuid(),
                 domainEvent.GetType().Name,
                 JsonConvert.SerializeObject(domainEvent, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All })
                 ))

@@ -4,8 +4,8 @@ using CleanSlice.Shared.Results;
 
 namespace CleanSlice.Application.Features.Tenants.Queries.GetTenants;
 
-public sealed record GetTenantsQuery(int Page, int PageSize, string? SearchTerm) : ICachedQuery<PagedResult<TenantDto>>
+public sealed record GetTenantsQuery(PagedRequest Request) : ICachedQuery<PagedResult<TenantDto>>
 {
-    public string CacheKey => $"tenants:page:{Page}:size:{PageSize}:search:{SearchTerm}";
+    public string CacheKey => $"tenants:page:{Request.Page}:size:{Request.PageSize}:search:{Request.SearchTerm}";
     public TimeSpan? Expiration => TimeSpan.FromMinutes(10);
 }

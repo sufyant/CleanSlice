@@ -1,6 +1,7 @@
 ﻿using CleanSlice.Application.Abstractions.Repositories;
 using CleanSlice.Domain.Users;
 using CleanSlice.Persistence.Contexts;
+using CleanSlice.Shared.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanSlice.Persistence.Repositories;
@@ -50,5 +51,52 @@ internal sealed class RoleRepository(ApplicationDbContext dbContext) : BaseRepos
             .AsNoTracking()
             .Where(r => r.IsSystemRole)
             .ToListAsync(cancellationToken);
+    }
+
+    // Pagination methods
+    public async Task<PagedResult<Role>> GetPagedRolesAsync(Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Roles
+            .AsNoTracking()
+            .Where(r => r.TenantId == tenantId);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            query = query.Where(r =>
+                r.Name.Value.Contains(request.SearchTerm) ||
+                r.Description.Contains(request.SearchTerm));
+        }
+
+        // Apply default sorting if not specified
+        if (string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            query = query.OrderBy(r => r.Name.Value);
+        }
+
+        return await query.ToPagedResultAsync(request, cancellationToken);
+    }
+
+    public async Task<PagedResult<Role>> GetPagedRolesWithPermissionsAsync(Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Roles
+            .AsNoTracking()
+            .Include(r => r.RolePermissions)
+                .ThenInclude(rp => rp.Permission)
+            .Where(r => r.TenantId == tenantId);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            query = query.Where(r =>
+                r.Name.Value.Contains(request.SearchTerm) ||
+                r.Description.Contains(request.SearchTerm));
+        }
+
+        // Apply default sorting if not specified
+        if (string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            query = query.OrderBy(r => r.Name.Value);
+        }
+
+        return await query.ToPagedResultAsync(request, cancellationToken);
     }
 }

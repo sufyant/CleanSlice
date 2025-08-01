@@ -14,9 +14,7 @@ internal sealed class GetTenantsQueryHandler(
     public async Task<Result<PagedResult<TenantDto>>> Handle(GetTenantsQuery request, CancellationToken cancellationToken)
     {
         var tenants = await tenantManagementRepository.GetPagedTenantsAsync(
-            request.Page,
-            request.PageSize,
-            request.SearchTerm,
+            request.Request,
             cancellationToken
         );
 

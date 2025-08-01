@@ -1,5 +1,6 @@
 ﻿using CleanSlice.Domain.Common.Enums;
 using CleanSlice.Domain.Users;
+using CleanSlice.Shared.Results;
 
 namespace CleanSlice.Application.Abstractions.Repositories;
 
@@ -13,4 +14,9 @@ public interface IUserRepository : IBaseRepository<User>
     Task<IEnumerable<User>> GetUsersWithRoleInTenantAsync(Guid roleId, Guid tenantId, CancellationToken cancellationToken = default);
     Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task<bool> ExistsByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default);
+
+    // Pagination methods
+    Task<PagedResult<User>> GetPagedUsersAsync(PagedRequest request, CancellationToken cancellationToken = default);
+    Task<PagedResult<User>> GetPagedUsersByTenantAsync(Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default);
+    Task<PagedResult<User>> GetPagedUsersWithRoleAsync(Guid roleId, Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default);
 }

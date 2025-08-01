@@ -2,6 +2,7 @@
 using CleanSlice.Domain.Common.Enums;
 using CleanSlice.Domain.Users;
 using CleanSlice.Persistence.Contexts;
+using CleanSlice.Shared.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanSlice.Persistence.Repositories;
@@ -69,5 +70,74 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
         return await dbContext.Users
             .AnyAsync(u => u.ExternalIdentityId.Value == externalIdentityId &&
                           u.ExternalIdentityId.Provider == provider, cancellationToken);
+    }
+
+    // Pagination methods
+    public async Task<PagedResult<User>> GetPagedUsersAsync(PagedRequest request, CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Users.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            query = query.Where(u =>
+                u.FullName.FirstName.Contains(request.SearchTerm) ||
+                u.FullName.LastName.Contains(request.SearchTerm) ||
+                u.Email.Value.Contains(request.SearchTerm));
+        }
+
+        // Apply default sorting if not specified
+        if (string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            query = query.OrderBy(u => u.FullName.FirstName);
+        }
+
+        return await query.ToPagedResultAsync(request, cancellationToken);
+    }
+
+    public async Task<PagedResult<User>> GetPagedUsersByTenantAsync(Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.UserTenants.Any(ut => ut.TenantId == tenantId));
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            query = query.Where(u =>
+                u.FullName.FirstName.Contains(request.SearchTerm) ||
+                u.FullName.LastName.Contains(request.SearchTerm) ||
+                u.Email.Value.Contains(request.SearchTerm));
+        }
+
+        // Apply default sorting if not specified
+        if (string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            query = query.OrderBy(u => u.FullName.FirstName);
+        }
+
+        return await query.ToPagedResultAsync(request, cancellationToken);
+    }
+
+    public async Task<PagedResult<User>> GetPagedUsersWithRoleAsync(Guid roleId, Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default)
+    {
+        var query = dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.UserTenants.Any(ut => ut.TenantId == tenantId) &&
+                       u.UserRoles.Any(ur => ur.RoleId == roleId && ur.TenantId == tenantId));
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+        {
+            query = query.Where(u =>
+                u.FullName.FirstName.Contains(request.SearchTerm) ||
+                u.FullName.LastName.Contains(request.SearchTerm) ||
+                u.Email.Value.Contains(request.SearchTerm));
+        }
+
+        // Apply default sorting if not specified
+        if (string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            query = query.OrderBy(u => u.FullName.FirstName);
+        }
+
+        return await query.ToPagedResultAsync(request, cancellationToken);
     }
 }

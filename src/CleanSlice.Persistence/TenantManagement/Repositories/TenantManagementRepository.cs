@@ -8,38 +8,29 @@ namespace CleanSlice.Persistence.TenantManagement.Repositories;
 
 public sealed class TenantManagementRepository(TenantCatalogDbContext context) : ITenantManagementRepository
 {
-    public async Task<PagedResult<Tenant>> GetPagedTenantsAsync(int page, int pageSize, string? searchTerm = null,
-        CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Tenant>> GetPagedTenantsAsync(PagedRequest request, CancellationToken cancellationToken = default)
     {
         // Build the query
         var query = context.Tenants.AsNoTracking();
 
         // Apply search filter if searchTerm is provided
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
         {
             query = query.Where(t =>
-                t.Name.Value.Contains(searchTerm) ||
-                t.Slug.Value.Contains(searchTerm) ||
-                t.Domain.Value.Contains(searchTerm)
+                t.Name.Value.Contains(request.SearchTerm) ||
+                t.Slug.Value.Contains(request.SearchTerm) ||
+                t.Domain.Value.Contains(request.SearchTerm)
             );
         }
 
-        // Get total count for pagination
-        var totalCount = await query.CountAsync(cancellationToken);
+        // Apply default sorting if not specified
+        if (string.IsNullOrWhiteSpace(request.SortBy))
+        {
+            query = query.OrderBy(t => t.Name.Value);
+        }
 
-        // Calculate pagination values
-        var skip = (page - 1) * pageSize;
-        var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-
-        // Get paged data
-        var items = await query
-            .OrderBy(t => t.Name.Value) // Default ordering
-            .Skip(skip)
-            .Take(pageSize)
-            .ToListAsync(cancellationToken);
-
-        // Return paged result
-        return PagedResult<Tenant>.Create(items, totalCount, page, pageSize);
+        // Apply pagination and return result
+        return await query.ToPagedResultAsync(request, cancellationToken);
     }
 
     public async Task<IReadOnlyList<Tenant>> GetAllTenantsAsync(CancellationToken cancellationToken = default) =>

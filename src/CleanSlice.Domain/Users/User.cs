@@ -48,8 +48,16 @@ public sealed class User : AuditableEntityWithSoftDelete
         var fullName = FullName.Create(firstName, lastName);
         var user = new User(id, externalId, userEmail, fullName);
 
-        user.RaiseDomainEvent(new UserCreatedDomainEvent(id, externalIdentityId, email));
+        user.RaiseDomainEvent(new UserCreatedDomainEvent(id, externalId, userEmail));
 
+        return user;
+    }
+
+    // Helper method for creating user with initial tenant
+    public static User CreateWithTenant(Guid id, string externalIdentityId, string email, string firstName, string lastName, Guid tenantId, LoginProvider provider = LoginProvider.Local)
+    {
+        var user = Create(id, externalIdentityId, email, firstName, lastName, provider);
+        user.JoinTenant(tenantId, isPrimary: true);
         return user;
     }
 
@@ -62,7 +70,7 @@ public sealed class User : AuditableEntityWithSoftDelete
         Email = Email.Create(email);
         FullName = FullName.Create(firstName, lastName);
 
-        RaiseDomainEvent(new UserUpdatedDomainEvent(Id, ExternalIdentityId.Value, oldEmail, email));
+        RaiseDomainEvent(new UserUpdatedDomainEvent(Id, ExternalIdentityId, Email.Create(oldEmail), Email));
     }
 
     public void UpdateLastLogin()
@@ -76,35 +84,30 @@ public sealed class User : AuditableEntityWithSoftDelete
 
     public void Activate()
     {
-        if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot activate deleted user");
-
         if (IsActive)
-            return;
+            return; // Already active
 
         DeletedAt = null;
         DeletedBy = null;
-        RaiseDomainEvent(new UserActivatedDomainEvent(Id, ExternalIdentityId.Value));
+        RaiseDomainEvent(new UserActivatedDomainEvent(Id, ExternalIdentityId));
     }
 
     public void Deactivate(Guid deletedBy)
     {
         if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot deactivate deleted user");
-
-        if (!IsActive)
-            return;
+            return; // Already deactivated
 
         DeletedAt = DateTimeOffset.UtcNow;
         DeletedBy = deletedBy;
-        RaiseDomainEvent(new UserDeactivatedDomainEvent(Id, ExternalIdentityId.Value));
+        RaiseDomainEvent(new UserDeactivatedDomainEvent(Id, ExternalIdentityId));
     }
 
     // Tenant Management Methods
     public void JoinTenant(Guid tenantId, bool isPrimary = false)
     {
-        if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot join tenant for deleted user");
+        // Business rule validation
+        var domainService = new Services.UserTenantDomainService();
+        domainService.ValidateUserCanJoinTenant(this, tenantId);
 
         if (_userTenants.Any(ut => ut.TenantId == tenantId))
             return; // Already a member
@@ -126,8 +129,9 @@ public sealed class User : AuditableEntityWithSoftDelete
 
     public void LeaveTenant(Guid tenantId)
     {
-        if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot leave tenant for deleted user");
+        // Business rule validation
+        var domainService = new Services.UserTenantDomainService();
+        domainService.ValidateUserCanLeaveTenant(this, tenantId);
 
         var userTenant = _userTenants.FirstOrDefault(ut => ut.TenantId == tenantId);
         if (userTenant == null)
@@ -146,8 +150,9 @@ public sealed class User : AuditableEntityWithSoftDelete
 
     public void SetPrimaryTenant(Guid tenantId)
     {
-        if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot set primary tenant for deleted user");
+        // Business rule validation
+        var domainService = new Services.UserTenantDomainService();
+        domainService.ValidatePrimaryTenantChange(this, tenantId);
 
         var targetTenant = _userTenants.FirstOrDefault(ut => ut.TenantId == tenantId);
         if (targetTenant == null)
@@ -183,14 +188,9 @@ public sealed class User : AuditableEntityWithSoftDelete
     // Role Management Methods (for specific tenant)
     public void AssignRoleInTenant(Role role, Guid tenantId)
     {
-        if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot assign role to deleted user");
-
-        if (!IsMemberOfTenant(tenantId))
-            throw new BusinessRuleViolationException("User is not a member of this tenant");
-
-        if (role.TenantId != tenantId)
-            throw new BusinessRuleViolationException("Cannot assign role from different tenant");
+        // Business rule validation
+        var domainService = new Services.UserTenantDomainService();
+        domainService.ValidateRoleAssignment(this, role, tenantId);
 
         if (_userRoles.Any(ur => ur.RoleId == role.Id && ur.TenantId == tenantId))
             return; // Already assigned
@@ -203,9 +203,6 @@ public sealed class User : AuditableEntityWithSoftDelete
 
     public void RemoveRoleInTenant(Guid roleId, Guid tenantId)
     {
-        if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot remove role from deleted user");
-
         var userRole = _userRoles.FirstOrDefault(ur => ur.RoleId == roleId && ur.TenantId == tenantId);
         if (userRole == null)
             return; // Not assigned

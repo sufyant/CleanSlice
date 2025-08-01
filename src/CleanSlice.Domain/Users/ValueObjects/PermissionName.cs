@@ -37,4 +37,14 @@ public sealed class PermissionName
     {
         return Value.GetHashCode();
     }
+
+    public static bool operator ==(PermissionName? left, PermissionName? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(PermissionName? left, PermissionName? right)
+    {
+        return !Equals(left, right);
+    }
 }

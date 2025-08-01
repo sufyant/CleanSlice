@@ -1,4 +1,5 @@
-﻿using CleanSlice.Shared.Entities;
+﻿using CleanSlice.Domain.Common.Exceptions;
+using CleanSlice.Shared.Entities;
 
 namespace CleanSlice.Domain.Outbox;
 
@@ -26,18 +27,33 @@ public sealed class OutboxMessage : BaseEntity
     
     public static OutboxMessage Create(Guid id, string type, string content)
     {
-        return new OutboxMessage(id, type, content, DateTimeOffset.UtcNow);
+        if (id == Guid.Empty)
+            throw new ValidationException(nameof(id), "OutboxMessage ID cannot be empty");
+
+        if (string.IsNullOrWhiteSpace(type))
+            throw new ValidationException(nameof(type), "OutboxMessage type cannot be empty");
+
+        if (string.IsNullOrWhiteSpace(content))
+            throw new ValidationException(nameof(content), "OutboxMessage content cannot be empty");
+
+        return new OutboxMessage(id, type.Trim(), content.Trim(), DateTimeOffset.UtcNow);
     }
 
     public void MarkAsProcessed()
     {
+        if (ProcessedOn.HasValue)
+            return; // Already processed
+
         ProcessedOn = DateTimeOffset.UtcNow;
         Error = null;
     }
 
     public void MarkAsFailed(string error)
     {
-        Error = error;
-        ProcessedOn = null;
+        if (string.IsNullOrWhiteSpace(error))
+            throw new ValidationException(nameof(error), "Error message cannot be empty");
+
+        Error = error.Trim();
+        ProcessedOn = null; // Reset processed time on failure
     }
 }

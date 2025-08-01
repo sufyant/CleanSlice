@@ -1,7 +1,7 @@
 ﻿using CleanSlice.Domain.Common.Enums;
 using CleanSlice.Domain.Common.Exceptions;
 
-namespace CleanSlice.Domain.Users.ValueObjects;
+namespace CleanSlice.Domain.Common.ValueObjects;
 
 public sealed class ExternalIdentityId
 {
@@ -14,7 +14,7 @@ public sealed class ExternalIdentityId
         Provider = provider;
     }
 
-    public static ExternalIdentityId Create(string value, LoginProvider provider = LoginProvider.Local)
+    public static ExternalIdentityId Create(string value, LoginProvider provider)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ValidationException(nameof(value), "External identity ID cannot be empty");
@@ -24,7 +24,7 @@ public sealed class ExternalIdentityId
 
     public static ExternalIdentityId CreateForLocal(string userId)
     {
-        return Create(userId);
+        return Create(userId, LoginProvider.Local);
     }
 
     public static ExternalIdentityId CreateForGoogle(string googleUserId)
@@ -55,5 +55,15 @@ public sealed class ExternalIdentityId
     public override int GetHashCode()
     {
         return HashCode.Combine(Value, Provider);
+    }
+
+    public static bool operator ==(ExternalIdentityId? left, ExternalIdentityId? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(ExternalIdentityId? left, ExternalIdentityId? right)
+    {
+        return !Equals(left, right);
     }
 }

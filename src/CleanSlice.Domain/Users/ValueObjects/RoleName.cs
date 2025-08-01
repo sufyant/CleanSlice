@@ -37,4 +37,14 @@ public sealed class RoleName
     {
         return Value.GetHashCode();
     }
+
+    public static bool operator ==(RoleName? left, RoleName? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(RoleName? left, RoleName? right)
+    {
+        return !Equals(left, right);
+    }
 }

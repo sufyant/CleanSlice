@@ -1,8 +1,9 @@
-﻿using CleanSlice.Shared.Interfaces;
+﻿using CleanSlice.Domain.Common.ValueObjects;
+using CleanSlice.Shared.Interfaces;
 
 namespace CleanSlice.Domain.Users.Events;
 
 public sealed record UserCreatedDomainEvent(
     Guid UserId,
-    string ExternalIdentityId,
-    string Email) : IDomainEvent;
+    ExternalIdentityId ExternalIdentityId,
+    Email Email) : IDomainEvent;

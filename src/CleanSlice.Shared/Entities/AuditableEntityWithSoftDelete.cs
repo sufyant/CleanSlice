@@ -10,7 +10,7 @@ public abstract class AuditableEntityWithSoftDelete : BaseEntity, IAuditableEnti
     public DateTimeOffset? LastModifiedAt { get; protected set; }
     public DateTimeOffset? DeletedAt { get; protected set; }
     public Guid? DeletedBy { get; protected set; }
-    protected bool IsActive => !DeletedAt.HasValue;
+    public bool IsActive => !DeletedAt.HasValue;
 
     public void MarkAsDeleted(Guid deletedBy)
     {

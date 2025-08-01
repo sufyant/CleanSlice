@@ -3,6 +3,5 @@
 namespace CleanSlice.Domain.Users.Events;
 
 public sealed record UserDeactivatedDomainEvent(
-    Guid UserId, 
-    Guid TenantId, 
-    string IdentityId) : IDomainEvent;
+    Guid UserId,
+    string ExternalIdentityId) : IDomainEvent;

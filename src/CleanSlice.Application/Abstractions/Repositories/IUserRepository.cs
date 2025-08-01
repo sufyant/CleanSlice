@@ -1,14 +1,16 @@
-﻿using CleanSlice.Domain.Users;
+﻿using CleanSlice.Domain.Common.Enums;
+using CleanSlice.Domain.Users;
 
 namespace CleanSlice.Application.Abstractions.Repositories;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    Task<User?> GetByIdentityIdAsync(string identityId, CancellationToken cancellationToken = default);
+    Task<User?> GetByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default);
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
     Task<IEnumerable<User>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
-    Task<User?> GetWithRolesAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<IEnumerable<User>> GetUsersWithRoleAsync(Guid roleId, CancellationToken cancellationToken = default);
+    Task<User?> GetWithTenantsAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<User?> GetWithTenantsAndRolesAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<User>> GetUsersWithRoleInTenantAsync(Guid roleId, Guid tenantId, CancellationToken cancellationToken = default);
     Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default);
-    Task<bool> ExistsByIdentityIdAsync(string identityId, CancellationToken cancellationToken = default);
+    Task<bool> ExistsByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default);
 }

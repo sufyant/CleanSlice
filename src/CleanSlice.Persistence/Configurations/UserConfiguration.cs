@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CleanSlice.Persistence.Configurations;
 
-internal sealed class UserConfiguration : AuditableTenantEntityWithSoftDeleteConfiguration<User>
+internal sealed class UserConfiguration : AuditableEntityWithSoftDeleteConfiguration<User>
 {
     public override void Configure(EntityTypeBuilder<User> builder)
     {
@@ -13,9 +13,20 @@ internal sealed class UserConfiguration : AuditableTenantEntityWithSoftDeleteCon
 
         builder.ToTable("users");
 
-        builder.Property(u => u.IdentityId)
-            .IsRequired()
-            .HasMaxLength(100);
+        // ExternalIdentityId value object
+        builder.OwnsOne(u => u.ExternalIdentityId, externalIdBuilder =>
+        {
+            externalIdBuilder.Property(e => e.Value)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("external_identity_id");
+
+            externalIdBuilder.Property(e => e.Provider)
+                .IsRequired()
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .HasColumnName("identity_provider");
+        });
 
         builder.OwnsOne(u => u.Email, emailBuilder =>
         {
@@ -25,25 +36,37 @@ internal sealed class UserConfiguration : AuditableTenantEntityWithSoftDeleteCon
                 .HasColumnName("email");
         });
 
-        builder.Property(u => u.FirstName)
-            .IsRequired()
-            .HasMaxLength(100);
+        // FullName value object
+        builder.OwnsOne(u => u.FullName, fullNameBuilder =>
+        {
+            fullNameBuilder.Property(fn => fn.FirstName)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("first_name");
 
-        builder.Property(u => u.LastName)
-            .IsRequired()
-            .HasMaxLength(100);
+            fullNameBuilder.Property(fn => fn.LastName)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("last_name");
+        });
 
-        builder.Property(u => u.IsActive)
-            .IsRequired();
+        builder.Property(u => u.LastLogin);
 
         // Indexes
-        builder.HasIndex(u => u.IdentityId)
-            .IsUnique();
+        builder.HasIndex(u => new { u.ExternalIdentityId.Value, u.ExternalIdentityId.Provider })
+            .IsUnique()
+            .HasDatabaseName("IX_Users_ExternalIdentityId_Provider");
 
-        builder.HasIndex(u => new { u.TenantId, u.Email.Value })
-            .IsUnique();
+        builder.HasIndex(u => u.Email.Value)
+            .IsUnique()
+            .HasDatabaseName("IX_Users_Email");
 
         // Relationships
+        builder.HasMany(u => u.UserTenants)
+            .WithOne(ut => ut.User)
+            .HasForeignKey(ut => ut.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(u => u.UserRoles)
             .WithOne(ur => ur.User)
             .HasForeignKey(ur => ur.UserId)

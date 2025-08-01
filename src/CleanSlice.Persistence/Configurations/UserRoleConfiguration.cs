@@ -19,13 +19,26 @@ internal sealed class UserRoleConfiguration : BaseEntityConfiguration<UserRole>
         builder.Property(ur => ur.RoleId)
             .IsRequired();
 
+        builder.Property(ur => ur.TenantId)
+            .IsRequired();
+
         builder.Property(ur => ur.AssignedAt)
             .IsRequired();
 
-        // Indexes
-        builder.HasIndex(ur => new { ur.UserId, ur.RoleId })
-            .IsUnique();
+        // Composite unique index - User can have same role only once per tenant
+        builder.HasIndex(ur => new { ur.UserId, ur.RoleId, ur.TenantId })
+            .IsUnique()
+            .HasDatabaseName("IX_UserRoles_User_Role_Tenant");
 
-        // Relationships are configured in User and Role configurations
+        // Relationships
+        builder.HasOne(ur => ur.User)
+            .WithMany(u => u.UserRoles)
+            .HasForeignKey(ur => ur.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(ur => ur.Role)
+            .WithMany(r => r.UserRoles)
+            .HasForeignKey(ur => ur.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

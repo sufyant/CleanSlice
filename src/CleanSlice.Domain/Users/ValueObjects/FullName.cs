@@ -1,4 +1,4 @@
-namespace CleanSlice.Domain.Common.ValueObjects;
+namespace CleanSlice.Domain.Users.ValueObjects;
 
 public sealed class FullName
 {

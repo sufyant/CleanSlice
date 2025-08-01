@@ -2,6 +2,6 @@
 
 namespace CleanSlice.Domain.Users.Events;
 
-public sealed record UserActivatedDomainEvent(
+public sealed record UserLastLoginUpdatedDomainEvent(
     Guid UserId,
-    string ExternalIdentityId) : IDomainEvent;
+    DateTimeOffset LastLogin) : IDomainEvent;

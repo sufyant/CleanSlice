@@ -1,5 +1,4 @@
 ﻿using CleanSlice.Application.Abstractions.Behaviors;
-using CleanSlice.Domain.Users.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,9 +30,6 @@ public static class DependencyInjection
 
         // AutoMapper
         services.AddAutoMapper(typeof(DependencyInjection).Assembly);
-
-        // Domain Services
-        services.AddScoped<UserTenantDomainService>();
 
         return services;
     }

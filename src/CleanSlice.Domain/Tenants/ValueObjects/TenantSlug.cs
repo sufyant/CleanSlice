@@ -53,4 +53,14 @@ public sealed class TenantSlug
     {
         return Value.GetHashCode();
     }
+
+    public static bool operator ==(TenantSlug? left, TenantSlug? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(TenantSlug? left, TenantSlug? right)
+    {
+        return !Equals(left, right);
+    }
 }

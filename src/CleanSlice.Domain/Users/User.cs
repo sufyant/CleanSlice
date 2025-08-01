@@ -70,7 +70,8 @@ public sealed class User : AuditableEntityWithSoftDelete
         Email = Email.Create(email);
         FullName = FullName.Create(firstName, lastName);
 
-        RaiseDomainEvent(new UserUpdatedDomainEvent(Id, ExternalIdentityId, Email.Create(oldEmail), Email));
+        var oldEmailValue = Email.Create(oldEmail);
+        RaiseDomainEvent(new UserUpdatedDomainEvent(Id, ExternalIdentityId, oldEmailValue, Email));
     }
 
     public void UpdateLastLogin()
@@ -185,6 +186,16 @@ public sealed class User : AuditableEntityWithSoftDelete
         return _userTenants.Any(ut => ut.TenantId == tenantId);
     }
 
+    public bool HasMultipleTenants()
+    {
+        return _userTenants.Count > 1;
+    }
+
+    public bool IsNewUser()
+    {
+        return !LastLogin.HasValue;
+    }
+
     // Role Management Methods (for specific tenant)
     public void AssignRoleInTenant(Role role, Guid tenantId)
     {
@@ -225,5 +236,10 @@ public sealed class User : AuditableEntityWithSoftDelete
     public IEnumerable<UserRole> GetRolesInTenant(Guid tenantId)
     {
         return _userRoles.Where(ur => ur.TenantId == tenantId);
+    }
+
+    public bool HasAnyRoleInTenant(Guid tenantId)
+    {
+        return _userRoles.Any(ur => ur.TenantId == tenantId);
     }
 }

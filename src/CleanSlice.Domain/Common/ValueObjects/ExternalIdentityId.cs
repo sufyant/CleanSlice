@@ -14,7 +14,7 @@ public sealed class ExternalIdentityId
         Provider = provider;
     }
 
-    public static ExternalIdentityId Create(string value, LoginProvider provider)
+    public static ExternalIdentityId Create(string value, LoginProvider provider = LoginProvider.Local)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ValidationException(nameof(value), "External identity ID cannot be empty");

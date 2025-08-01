@@ -62,11 +62,15 @@ public sealed class Role : AuditableTenantEntityWithSoftDelete
 
     public void AssignPermission(Permission permission)
     {
-        if (IsActive)
+        if (!IsActive)
             throw new BusinessRuleViolationException("Cannot assign permission to deleted role");
 
         if (_rolePermissions.Any(rp => rp.PermissionId == permission.Id))
             return; // Already assigned
+
+        // Business rule: System roles cannot have permissions modified
+        if (IsSystemRole)
+            throw new BusinessRuleViolationException("Cannot modify permissions of system roles");
 
         var rolePermission = RolePermission.Create(Guid.NewGuid(), Id, permission.Id);
         _rolePermissions.Add(rolePermission);
@@ -76,8 +80,12 @@ public sealed class Role : AuditableTenantEntityWithSoftDelete
 
     public void RemovePermission(Guid permissionId)
     {
-        if (IsActive)
+        if (!IsActive)
             throw new BusinessRuleViolationException("Cannot remove permission from deleted role");
+
+        // Business rule: System roles cannot have permissions modified
+        if (IsSystemRole)
+            throw new BusinessRuleViolationException("Cannot modify permissions of system roles");
 
         var rolePermission = _rolePermissions.FirstOrDefault(rp => rp.PermissionId == permissionId);
         if (rolePermission == null)

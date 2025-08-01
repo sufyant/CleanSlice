@@ -45,4 +45,14 @@ public sealed class DomainName
     {
         return Value.GetHashCode();
     }
+
+    public static bool operator ==(DomainName? left, DomainName? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(DomainName? left, DomainName? right)
+    {
+        return !Equals(left, right);
+    }
 }

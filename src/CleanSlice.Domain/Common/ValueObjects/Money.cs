@@ -1,3 +1,5 @@
+using CleanSlice.Domain.Common.Exceptions;
+
 namespace CleanSlice.Domain.Common.ValueObjects;
 
 public sealed class Money
@@ -14,10 +16,13 @@ public sealed class Money
     public static Money Create(decimal amount, string currency)
     {
         if (amount < 0)
-            throw new ArgumentException("Amount cannot be negative", nameof(amount));
+            throw new ValidationException(nameof(amount), "Amount cannot be negative");
 
         if (string.IsNullOrWhiteSpace(currency))
-            throw new ArgumentException("Currency cannot be null or empty", nameof(currency));
+            throw new ValidationException(nameof(currency), "Currency cannot be null or empty");
+
+        if (currency.Length != 3)
+            throw new ValidationException(nameof(currency), "Currency must be 3 characters long (ISO 4217)");
 
         return new Money(amount, currency.ToUpperInvariant());
     }
@@ -25,7 +30,7 @@ public sealed class Money
     public Money Add(Money other)
     {
         if (Currency != other.Currency)
-            throw new InvalidOperationException("Cannot add money with different currencies");
+            throw new BusinessRuleViolationException("Cannot add money with different currencies");
 
         return new Money(Amount + other.Amount, Currency);
     }
@@ -33,13 +38,45 @@ public sealed class Money
     public Money Subtract(Money other)
     {
         if (Currency != other.Currency)
-            throw new InvalidOperationException("Cannot subtract money with different currencies");
+            throw new BusinessRuleViolationException("Cannot subtract money with different currencies");
 
         if (Amount < other.Amount)
-            throw new InvalidOperationException("Insufficient funds");
+            throw new BusinessRuleViolationException("Insufficient funds");
 
         return new Money(Amount - other.Amount, Currency);
     }
 
     public override string ToString() => $"{Amount:F2} {Currency}";
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Money other &&
+               Amount == other.Amount &&
+               Currency == other.Currency;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Amount, Currency);
+    }
+
+    public static bool operator ==(Money? left, Money? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Money? left, Money? right)
+    {
+        return !Equals(left, right);
+    }
+
+    public static Money operator +(Money left, Money right)
+    {
+        return left.Add(right);
+    }
+
+    public static Money operator -(Money left, Money right)
+    {
+        return left.Subtract(right);
+    }
 }

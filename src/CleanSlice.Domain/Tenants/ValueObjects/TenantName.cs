@@ -40,4 +40,14 @@ public sealed class TenantName
     {
         return Value.GetHashCode();
     }
+
+    public static bool operator ==(TenantName? left, TenantName? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(TenantName? left, TenantName? right)
+    {
+        return !Equals(left, right);
+    }
 }

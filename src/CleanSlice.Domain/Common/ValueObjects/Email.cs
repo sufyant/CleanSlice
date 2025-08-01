@@ -44,4 +44,14 @@ public sealed class Email
     {
         return Value.GetHashCode();
     }
+
+    public static bool operator ==(Email? left, Email? right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Email? left, Email? right)
+    {
+        return !Equals(left, right);
+    }
 }

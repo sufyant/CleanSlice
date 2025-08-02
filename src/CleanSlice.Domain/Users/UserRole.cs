@@ -2,11 +2,10 @@
 
 namespace CleanSlice.Domain.Users;
 
-public sealed class UserRole : BaseEntity
+public sealed class UserRole : TenantBaseEntity
 {
     public Guid UserId { get; private set; }
     public Guid RoleId { get; private set; }
-    public Guid TenantId { get; private set; }
     public DateTimeOffset AssignedAt { get; private set; }
 
     // Navigation properties

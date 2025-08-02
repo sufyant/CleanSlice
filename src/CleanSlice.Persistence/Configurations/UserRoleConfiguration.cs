@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CleanSlice.Persistence.Configurations;
 
-internal sealed class UserRoleConfiguration : BaseEntityConfiguration<UserRole>
+internal sealed class UserRoleConfiguration : TenantBaseEntityConfiguration<UserRole>
 {
     public override void Configure(EntityTypeBuilder<UserRole> builder)
     {
@@ -20,10 +20,6 @@ internal sealed class UserRoleConfiguration : BaseEntityConfiguration<UserRole>
         builder.Property(ur => ur.RoleId)
             .IsRequired()
             .HasColumnName("role_id");
-
-        builder.Property(ur => ur.TenantId)
-            .IsRequired()
-            .HasColumnName("tenant_id");
 
         builder.Property(ur => ur.AssignedAt)
             .IsRequired()

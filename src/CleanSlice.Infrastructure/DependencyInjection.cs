@@ -1,5 +1,4 @@
 ﻿using CleanSlice.Application.Abstractions.Authentication;
-using CleanSlice.Application.Abstractions.Authorization;
 using CleanSlice.Application.Abstractions.Caching;
 
 using CleanSlice.Infrastructure.Authentication;

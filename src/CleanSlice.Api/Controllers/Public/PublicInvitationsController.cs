@@ -1,4 +1,5 @@
-﻿using CleanSlice.Api.Common;
+﻿using Asp.Versioning;
+using CleanSlice.Api.Common;
 using CleanSlice.Api.Controllers;
 using CleanSlice.Shared.Contracts.Public.Invitations;
 using Microsoft.AspNetCore.Authorization;

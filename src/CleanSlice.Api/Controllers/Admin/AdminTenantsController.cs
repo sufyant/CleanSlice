@@ -2,7 +2,6 @@
 using CleanSlice.Api.Common;
 using CleanSlice.Api.Controllers;
 using CleanSlice.Shared.Contracts.Admin.Tenants;
-using CleanSlice.Shared.Contracts.Tenants.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

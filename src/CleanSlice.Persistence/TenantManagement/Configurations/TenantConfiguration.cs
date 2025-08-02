@@ -1,5 +1,4 @@
 ﻿using CleanSlice.Domain.Tenants;
-using CleanSlice.Domain.Tenants.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

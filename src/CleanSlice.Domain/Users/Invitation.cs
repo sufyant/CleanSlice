@@ -1,7 +1,6 @@
 ﻿using CleanSlice.Domain.Common.Exceptions;
 using CleanSlice.Domain.Common.ValueObjects;
 using CleanSlice.Domain.Users.Events;
-using CleanSlice.Domain.Users.ValueObjects;
 using CleanSlice.Shared.Entities;
 
 namespace CleanSlice.Domain.Users;

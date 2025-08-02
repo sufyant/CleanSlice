@@ -1,5 +1,4 @@
-﻿using CleanSlice.Domain.Common.Exceptions;
-using CleanSlice.Domain.Tenants;
+﻿using CleanSlice.Domain.Tenants;
 using CleanSlice.Domain.Users.Events;
 using CleanSlice.Shared.Entities;
 

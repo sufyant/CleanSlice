@@ -9,10 +9,10 @@ public sealed record PermissionCategory
 {
     public string Name { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
-    public PermissionSummary[] Permissions { get; init; } = [];
+    public CategoryPermissionInfo[] Permissions { get; init; } = [];
 }
 
-public sealed record PermissionSummary
+public sealed record CategoryPermissionInfo
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;

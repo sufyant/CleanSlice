@@ -4,11 +4,11 @@ public sealed record UserRolesResponse
 {
     public Guid UserId { get; init; }
     public string UserEmail { get; init; } = string.Empty;
-    public UserRoleInfo[] Roles { get; init; } = [];
+    public UserRoleDetail[] Roles { get; init; } = [];
     public string[] AllPermissions { get; init; } = []; // Aggregated from all roles
 }
 
-public sealed record UserRoleInfo
+public sealed record UserRoleDetail
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = string.Empty;

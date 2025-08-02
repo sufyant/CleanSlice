@@ -16,31 +16,42 @@ public static class DependencyInjection
     {
         #region Tenant Catalog DbContext
 
-        var tenantCatalogDbConnectionString = configuration.GetConnectionString("TenantCatalog") ??
-                                              throw new ArgumentNullException(nameof(configuration));
+        var tenantCatalogDbConnectionString = configuration.GetConnectionString("TenantCatalog");
+        if (string.IsNullOrWhiteSpace(tenantCatalogDbConnectionString))
+            throw new ArgumentException("TenantCatalog connection string is not configured", nameof(configuration));
 
         services.AddDbContext<TenantCatalogDbContext>(options =>
-            options.UseNpgsql(tenantCatalogDbConnectionString).UseSnakeCaseNamingConvention());
+            options.UseNpgsql(tenantCatalogDbConnectionString)
+                   .UseSnakeCaseNamingConvention()
+                   .EnableSensitiveDataLogging() // Only in development
+                   .EnableDetailedErrors()); // Only in development
 
         #endregion
 
         #region Application DbContext
 
-        var applicationDbConnectionString = configuration.GetConnectionString("Tenant") ??
-                                            throw new ArgumentNullException(nameof(configuration));
+        var applicationDbConnectionString = configuration.GetConnectionString("Tenant");
+        if (string.IsNullOrWhiteSpace(applicationDbConnectionString))
+            throw new ArgumentException("Tenant connection string is not configured", nameof(configuration));
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(applicationDbConnectionString).UseSnakeCaseNamingConvention());
+            options.UseNpgsql(applicationDbConnectionString)
+                   .UseSnakeCaseNamingConvention()
+                   .EnableSensitiveDataLogging() // Only in development
+                   .EnableDetailedErrors()); // Only in development
 
         services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
 
         #endregion
 
+        // Register Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+
+        // Register Tenant Management Repository
         services.AddScoped<ITenantManagementRepository, TenantManagementRepository>();
 
-        // User management repositories
+        // Register User Management Repositories
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserTenantRepository, UserTenantRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();

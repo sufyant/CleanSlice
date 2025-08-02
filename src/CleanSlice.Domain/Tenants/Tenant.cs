@@ -42,7 +42,7 @@ public sealed class Tenant : AuditableEntityWithSoftDelete
     public void Update(string name, string domain, string slug, string connectionString)
     {
         if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot update deleted tenant");
+            throw new DomainInvariantViolationException("Cannot update deleted tenant");
 
         if (string.IsNullOrWhiteSpace(connectionString))
             throw new ValidationException(nameof(connectionString), "Connection string cannot be empty");

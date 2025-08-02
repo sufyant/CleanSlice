@@ -30,7 +30,7 @@ public sealed class Money
     public Money Add(Money other)
     {
         if (Currency != other.Currency)
-            throw new BusinessRuleViolationException("Cannot add money with different currencies");
+            throw new DomainInvariantViolationException("Cannot add money with different currencies");
 
         return new Money(Amount + other.Amount, Currency);
     }
@@ -38,7 +38,7 @@ public sealed class Money
     public Money Subtract(Money other)
     {
         if (Currency != other.Currency)
-            throw new BusinessRuleViolationException("Cannot subtract money with different currencies");
+            throw new DomainInvariantViolationException("Cannot subtract money with different currencies");
 
         if (Amount < other.Amount)
             throw new BusinessRuleViolationException("Insufficient funds");

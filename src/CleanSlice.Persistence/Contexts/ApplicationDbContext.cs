@@ -1,5 +1,6 @@
 ﻿using CleanSlice.Application.Abstractions.Authentication;
 using CleanSlice.Application.Abstractions.Data;
+using CleanSlice.Domain.Outbox;
 using CleanSlice.Domain.Users;
 using CleanSlice.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ public sealed class ApplicationDbContext(
     public DbSet<UserRole> UserRoles => Set<UserRole>();
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
     public DbSet<Invitation> Invitations => Set<Invitation>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

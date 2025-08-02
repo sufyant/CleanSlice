@@ -1,6 +1,7 @@
 ﻿using CleanSlice.Application.Abstractions.Repositories;
 using CleanSlice.Persistence.Contexts;
 using CleanSlice.Shared.Entities;
+using CleanSlice.Shared.Exceptions.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 
@@ -12,14 +13,23 @@ internal abstract class BaseRepository<T>(ApplicationDbContext dbContext) : IBas
     public virtual async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
         await dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
+    public virtual async Task<T> GetByIdRequiredAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var entity = await GetByIdAsync(id, cancellationToken);
+        return entity ?? throw new EntityNotFoundException($"{typeof(T).Name} with ID {id} was not found");
+    }
+
     public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken) =>
-        await dbContext.Set<T>().ToListAsync(cancellationToken);
+        await dbContext.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
 
     public virtual IQueryable<T> Query() =>
         dbContext.Set<T>().AsQueryable();
 
+    public virtual IQueryable<T> QueryAsNoTracking() =>
+        dbContext.Set<T>().AsQueryable().AsNoTracking();
+
     public virtual async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken) =>
-        await dbContext.Set<T>().AnyAsync(e => EF.Property<Guid>(e, "Id") == id, cancellationToken);
+        await dbContext.Set<T>().AsNoTracking().AnyAsync(e => e.Id == id, cancellationToken);
 
     public virtual async Task AddAsync(T entity, CancellationToken cancellationToken) =>
         await dbContext.Set<T>().AddAsync(entity, cancellationToken);

@@ -4,7 +4,9 @@ public interface IBaseRepository<T> where T : class
 {
     // Query methods
     IQueryable<T> Query();
+    IQueryable<T> QueryAsNoTracking();
     Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<T> GetByIdRequiredAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default);
 

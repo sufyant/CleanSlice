@@ -47,8 +47,8 @@ public sealed class Role : AuditableTenantEntityWithSoftDelete
         if (IsSystemRole)
             throw new BusinessRuleViolationException("Cannot update system role");
 
-        if (IsActive)
-            throw new BusinessRuleViolationException("Cannot update deleted role");
+        if (!IsActive)
+            throw new DomainInvariantViolationException("Cannot update deleted role");
 
         if (string.IsNullOrWhiteSpace(description))
             throw new ValidationException(nameof(description), "Description cannot be empty");
@@ -63,7 +63,7 @@ public sealed class Role : AuditableTenantEntityWithSoftDelete
     public void AssignPermission(Permission permission)
     {
         if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot assign permission to deleted role");
+            throw new DomainInvariantViolationException("Cannot assign permission to deleted role");
 
         if (_rolePermissions.Any(rp => rp.PermissionId == permission.Id))
             return; // Already assigned
@@ -81,7 +81,7 @@ public sealed class Role : AuditableTenantEntityWithSoftDelete
     public void RemovePermission(Guid permissionId)
     {
         if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot remove permission from deleted role");
+            throw new DomainInvariantViolationException("Cannot remove permission from deleted role");
 
         // Business rule: System roles cannot have permissions modified
         if (IsSystemRole)

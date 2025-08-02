@@ -7,7 +7,7 @@ public sealed class UserTenantDomainService
     public void ValidateUserCanJoinTenant(User user, Guid tenantId)
     {
         if (!user.IsActive)
-            throw new BusinessRuleViolationException("Inactive user cannot join tenant");
+            throw new DomainInvariantViolationException("Inactive user cannot join tenant");
 
         if (user.IsMemberOfTenant(tenantId))
             throw new BusinessRuleViolationException("User is already a member of this tenant");
@@ -40,16 +40,16 @@ public sealed class UserTenantDomainService
     public void ValidateRoleAssignment(User user, Role role, Guid tenantId)
     {
         if (!user.IsActive)
-            throw new BusinessRuleViolationException("Cannot assign role to inactive user");
+            throw new DomainInvariantViolationException("Cannot assign role to inactive user");
 
         if (!user.IsMemberOfTenant(tenantId))
             throw new BusinessRuleViolationException("User must be a member of the tenant to receive roles");
 
         if (role.TenantId != tenantId)
-            throw new BusinessRuleViolationException("Role does not belong to the specified tenant");
+            throw new DomainInvariantViolationException("Role does not belong to the specified tenant");
 
         if (!role.IsActive)
-            throw new BusinessRuleViolationException("Cannot assign inactive role");
+            throw new DomainInvariantViolationException("Cannot assign inactive role");
 
         if (user.HasRoleInTenant(role.Id, tenantId))
             throw new BusinessRuleViolationException("User already has this role in the tenant");

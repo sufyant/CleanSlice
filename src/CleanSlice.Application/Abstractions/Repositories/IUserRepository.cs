@@ -7,7 +7,9 @@ namespace CleanSlice.Application.Abstractions.Repositories;
 public interface IUserRepository : IBaseRepository<User>
 {
     Task<User?> GetByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default);
+    Task<User> GetByExternalIdentityIdRequiredAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default);
     Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
+    Task<User> GetByEmailRequiredAsync(string email, CancellationToken cancellationToken = default);
     Task<IEnumerable<User>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default);
     Task<User?> GetWithTenantsAsync(Guid id, CancellationToken cancellationToken = default);
     Task<User?> GetWithTenantsAndRolesAsync(Guid id, CancellationToken cancellationToken = default);

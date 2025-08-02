@@ -2,6 +2,7 @@
 using CleanSlice.Domain.Common.Enums;
 using CleanSlice.Domain.Users;
 using CleanSlice.Persistence.Contexts;
+using CleanSlice.Shared.Exceptions.Infrastructure;
 using CleanSlice.Shared.Results;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +23,18 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
         return await dbContext.Users
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
+    }
+
+    public async Task<User> GetByExternalIdentityIdRequiredAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByExternalIdentityIdAsync(externalIdentityId, provider, cancellationToken);
+        return user ?? throw new EntityNotFoundException($"User with external identity ID '{externalIdentityId}' and provider '{provider}' was not found");
+    }
+
+    public async Task<User> GetByEmailRequiredAsync(string email, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByEmailAsync(email, cancellationToken);
+        return user ?? throw new EntityNotFoundException($"User with email '{email}' was not found");
     }
 
     public async Task<IEnumerable<User>> GetByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)

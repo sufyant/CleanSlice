@@ -64,7 +64,7 @@ public sealed class User : AuditableEntityWithSoftDelete
     public void Update(string email, string firstName, string lastName)
     {
         if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot update deleted user");
+            throw new DomainInvariantViolationException("Cannot update deleted user");
 
         var oldEmail = Email.Value;
         Email = Email.Create(email);
@@ -77,7 +77,7 @@ public sealed class User : AuditableEntityWithSoftDelete
     public void UpdateLastLogin()
     {
         if (!IsActive)
-            throw new BusinessRuleViolationException("Cannot update last login for deleted user");
+            throw new DomainInvariantViolationException("Cannot update last login for deleted user");
 
         LastLogin = DateTimeOffset.UtcNow;
         RaiseDomainEvent(new UserLastLoginUpdatedDomainEvent(Id, LastLogin.Value));
@@ -157,7 +157,7 @@ public sealed class User : AuditableEntityWithSoftDelete
 
         var targetTenant = _userTenants.FirstOrDefault(ut => ut.TenantId == tenantId);
         if (targetTenant == null)
-            throw new BusinessRuleViolationException("User is not a member of this tenant");
+            throw new DomainInvariantViolationException("User is not a member of this tenant");
 
         if (targetTenant.IsPrimary)
             return; // Already primary

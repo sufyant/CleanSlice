@@ -50,6 +50,10 @@ internal sealed class UserConfiguration : AuditableEntityWithSoftDeleteConfigura
                 .HasColumnName("last_name");
         });
 
+        builder.Property(u => u.PasswordHash)
+            .HasMaxLength(255)
+            .HasColumnName("password_hash");
+
         builder.Property(u => u.LastLogin);
 
         builder.Property(u => u.IsSuperAdmin)

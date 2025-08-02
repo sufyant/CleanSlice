@@ -22,6 +22,11 @@ public interface IUserRepository : IBaseRepository<User>
     Task<int> GetSuperAdminCountAsync(CancellationToken cancellationToken = default);
     Task<bool> HasAnySuperAdminAsync(CancellationToken cancellationToken = default);
 
+    // Authentication methods
+    Task<User?> GetByEmailForAuthenticationAsync(string email, CancellationToken cancellationToken = default);
+    Task<IEnumerable<User>> GetLocalUsersAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<User>> GetExternalUsersAsync(LoginProvider provider, CancellationToken cancellationToken = default);
+
     // Pagination methods
     Task<PagedResult<User>> GetPagedUsersAsync(PagedRequest request, CancellationToken cancellationToken = default);
     Task<PagedResult<User>> GetPagedUsersByTenantAsync(Guid tenantId, PagedRequest request, CancellationToken cancellationToken = default);

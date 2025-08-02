@@ -12,6 +12,7 @@ public sealed class User : AuditableEntityWithSoftDelete
     public ExternalIdentityId ExternalIdentityId { get; private set; } = null!;
     public Email Email { get; private set; } = null!;
     public FullName FullName { get; private set; } = null!;
+    public string? PasswordHash { get; private set; }
     public DateTimeOffset? LastLogin { get; private set; }
     public bool IsSuperAdmin { get; private set; } = false;
 
@@ -62,6 +63,23 @@ public sealed class User : AuditableEntityWithSoftDelete
         return user;
     }
 
+    // Create local user with password
+    public static User CreateLocalUser(Guid id, string email, string firstName, string lastName, string passwordHash)
+    {
+        var user = Create(id, email, email, firstName, lastName, LoginProvider.Local);
+        user.SetPassword(passwordHash);
+        return user;
+    }
+
+    // Create external user (Google/Microsoft)
+    public static User CreateExternalUser(Guid id, string externalIdentityId, string email, string firstName, string lastName, LoginProvider provider)
+    {
+        if (provider == LoginProvider.Local)
+            throw new ValidationException(nameof(provider), "Use CreateLocalUser for local users");
+
+        return Create(id, externalIdentityId, email, firstName, lastName, provider);
+    }
+
     public void Update(string email, string firstName, string lastName)
     {
         if (!IsActive)
@@ -82,6 +100,66 @@ public sealed class User : AuditableEntityWithSoftDelete
 
         LastLogin = DateTimeOffset.UtcNow;
         RaiseDomainEvent(new UserLastLoginUpdatedDomainEvent(Id, LastLogin.Value));
+    }
+
+    // Password Management - Local Authentication
+    public void SetPassword(string passwordHash)
+    {
+        if (!IsActive)
+            throw new DomainInvariantViolationException("Cannot set password for inactive user");
+
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            throw new ValidationException(nameof(passwordHash), "Password hash cannot be empty");
+
+        // Only local users can have passwords
+        if (ExternalIdentityId.Provider != LoginProvider.Local)
+            throw new BusinessRuleViolationException("Only local users can have passwords");
+
+        PasswordHash = passwordHash;
+        RaiseDomainEvent(new UserPasswordChangedDomainEvent(Id));
+    }
+
+    public void ChangePassword(string newPasswordHash)
+    {
+        if (!IsActive)
+            throw new DomainInvariantViolationException("Cannot change password for inactive user");
+
+        if (!HasPassword())
+            throw new BusinessRuleViolationException("User does not have a password to change");
+
+        if (string.IsNullOrWhiteSpace(newPasswordHash))
+            throw new ValidationException(nameof(newPasswordHash), "Password hash cannot be empty");
+
+        PasswordHash = newPasswordHash;
+        RaiseDomainEvent(new UserPasswordChangedDomainEvent(Id));
+    }
+
+    public void RemovePassword()
+    {
+        if (!HasPassword())
+            return; // No password to remove
+
+        // Only remove password if user has external authentication
+        if (ExternalIdentityId.Provider == LoginProvider.Local)
+            throw new BusinessRuleViolationException("Cannot remove password from local user");
+
+        PasswordHash = null;
+        RaiseDomainEvent(new UserPasswordRemovedDomainEvent(Id));
+    }
+
+    public bool HasPassword()
+    {
+        return !string.IsNullOrEmpty(PasswordHash);
+    }
+
+    public bool IsLocalUser()
+    {
+        return ExternalIdentityId.Provider == LoginProvider.Local;
+    }
+
+    public bool IsExternalUser()
+    {
+        return !IsLocalUser();
     }
 
     public void Activate()

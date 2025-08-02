@@ -89,6 +89,30 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
                           u.ExternalIdentityId.Provider == provider, cancellationToken);
     }
 
+    // Authentication specific methods
+    public async Task<User?> GetByEmailForAuthenticationAsync(string email, CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Email.Value == email && u.IsActive, cancellationToken);
+    }
+
+    public async Task<IEnumerable<User>> GetLocalUsersAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.ExternalIdentityId.Provider == LoginProvider.Local && u.IsActive)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<User>> GetExternalUsersAsync(LoginProvider provider, CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.ExternalIdentityId.Provider == provider && u.IsActive)
+            .ToListAsync(cancellationToken);
+    }
+
     // Super Admin specific methods
     public async Task<IEnumerable<User>> GetSuperAdminsAsync(CancellationToken cancellationToken = default)
     {

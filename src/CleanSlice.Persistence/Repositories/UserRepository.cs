@@ -48,6 +48,7 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
     public async Task<User?> GetWithTenantsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
+            .AsNoTracking()
             .Include(u => u.UserTenants)
             .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
     }
@@ -55,6 +56,7 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
     public async Task<User?> GetWithTenantsAndRolesAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
+            .AsNoTracking()
             .Include(u => u.UserTenants)
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
@@ -75,12 +77,14 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
     public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
+            .AsNoTracking()
             .AnyAsync(u => u.Email.Value == email, cancellationToken);
     }
 
     public async Task<bool> ExistsByExternalIdentityIdAsync(string externalIdentityId, LoginProvider provider = LoginProvider.Local, CancellationToken cancellationToken = default)
     {
         return await dbContext.Users
+            .AsNoTracking()
             .AnyAsync(u => u.ExternalIdentityId.Value == externalIdentityId &&
                           u.ExternalIdentityId.Provider == provider, cancellationToken);
     }

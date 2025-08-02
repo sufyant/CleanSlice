@@ -22,9 +22,7 @@ public static class DependencyInjection
 
         services.AddDbContext<TenantCatalogDbContext>(options =>
             options.UseNpgsql(tenantCatalogDbConnectionString)
-                   .UseSnakeCaseNamingConvention()
-                   .EnableSensitiveDataLogging() // Only in development
-                   .EnableDetailedErrors()); // Only in development
+                   .UseSnakeCaseNamingConvention());
 
         #endregion
 
@@ -36,9 +34,7 @@ public static class DependencyInjection
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(applicationDbConnectionString)
-                   .UseSnakeCaseNamingConvention()
-                   .EnableSensitiveDataLogging() // Only in development
-                   .EnableDetailedErrors()); // Only in development
+                   .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IApplicationDbContext>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());

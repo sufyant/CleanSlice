@@ -34,6 +34,7 @@ internal sealed class PermissionRepository(ApplicationDbContext dbContext) : Bas
     public async Task<bool> ExistsByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         return await dbContext.Permissions
+            .AsNoTracking()
             .AnyAsync(p => p.Name.Value.Equals(name, StringComparison.InvariantCultureIgnoreCase), cancellationToken);
     }
 

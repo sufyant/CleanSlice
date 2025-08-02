@@ -26,6 +26,7 @@ internal sealed class RoleRepository(ApplicationDbContext dbContext) : BaseRepos
     public async Task<Role?> GetWithPermissionsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await dbContext.Roles
+            .AsNoTracking()
             .Include(r => r.RolePermissions)
                 .ThenInclude(rp => rp.Permission)
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
@@ -42,6 +43,7 @@ internal sealed class RoleRepository(ApplicationDbContext dbContext) : BaseRepos
     public async Task<bool> ExistsByNameAsync(string name, Guid tenantId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Roles
+            .AsNoTracking()
             .AnyAsync(r => r.Name.Value.Equals(name, StringComparison.InvariantCultureIgnoreCase) && r.TenantId == tenantId, cancellationToken);
     }
 

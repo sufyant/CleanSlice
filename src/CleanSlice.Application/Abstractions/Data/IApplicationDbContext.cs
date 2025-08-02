@@ -1,4 +1,5 @@
-﻿using CleanSlice.Domain.Users;
+﻿using CleanSlice.Domain.Outbox;
+using CleanSlice.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace CleanSlice.Application.Abstractions.Data;
@@ -12,4 +13,5 @@ public interface IApplicationDbContext
     DbSet<UserRole> UserRoles { get; }
     DbSet<RolePermission> RolePermissions { get; }
     DbSet<Invitation> Invitations { get; }
+    DbSet<OutboxMessage> OutboxMessages { get; }
 }

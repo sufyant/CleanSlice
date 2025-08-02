@@ -52,6 +52,11 @@ internal sealed class UserConfiguration : AuditableEntityWithSoftDeleteConfigura
 
         builder.Property(u => u.LastLogin);
 
+        builder.Property(u => u.IsSuperAdmin)
+            .IsRequired()
+            .HasDefaultValue(false)
+            .HasColumnName("is_super_admin");
+
         // Indexes
         builder.HasIndex(u => new { u.ExternalIdentityId.Value, u.ExternalIdentityId.Provider })
             .IsUnique()
@@ -60,6 +65,10 @@ internal sealed class UserConfiguration : AuditableEntityWithSoftDeleteConfigura
         builder.HasIndex(u => u.Email.Value)
             .IsUnique()
             .HasDatabaseName("IX_Users_Email");
+
+        // Super admin index for security queries
+        builder.HasIndex(u => u.IsSuperAdmin)
+            .HasDatabaseName("IX_Users_IsSuperAdmin");
 
         // Relationships
         builder.HasMany(u => u.UserTenants)

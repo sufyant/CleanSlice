@@ -89,6 +89,29 @@ internal sealed class UserRepository(ApplicationDbContext dbContext) : BaseRepos
                           u.ExternalIdentityId.Provider == provider, cancellationToken);
     }
 
+    // Super Admin specific methods
+    public async Task<IEnumerable<User>> GetSuperAdminsAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.IsSuperAdmin && u.IsActive)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> GetSuperAdminCountAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .CountAsync(u => u.IsSuperAdmin && u.IsActive, cancellationToken);
+    }
+
+    public async Task<bool> HasAnySuperAdminAsync(CancellationToken cancellationToken = default)
+    {
+        return await dbContext.Users
+            .AsNoTracking()
+            .AnyAsync(u => u.IsSuperAdmin && u.IsActive, cancellationToken);
+    }
+
     // Pagination methods
     public async Task<PagedResult<User>> GetPagedUsersAsync(PagedRequest request, CancellationToken cancellationToken = default)
     {

@@ -13,6 +13,7 @@ public sealed class User : AuditableEntityWithSoftDelete
     public Email Email { get; private set; } = null!;
     public FullName FullName { get; private set; } = null!;
     public DateTimeOffset? LastLogin { get; private set; }
+    public bool IsSuperAdmin { get; private set; } = false;
 
     // Navigation properties - User can belong to multiple tenants
     private readonly List<UserTenant> _userTenants = [];
@@ -194,6 +195,75 @@ public sealed class User : AuditableEntityWithSoftDelete
     public bool IsNewUser()
     {
         return !LastLogin.HasValue;
+    }
+
+    // Super Admin Management - High Security
+    public void PromoteToSuperAdmin(User promotingUser)
+    {
+        // Security validation through domain service
+        var superAdminService = new Services.SuperAdminDomainService();
+        superAdminService.ValidateCanPromoteToSuperAdmin(promotingUser, this);
+
+        if (IsSuperAdmin)
+            return; // Already super admin
+
+        IsSuperAdmin = true;
+
+        RaiseDomainEvent(new UserPromotedToSuperAdminDomainEvent(Id, promotingUser.Id, DateTimeOffset.UtcNow));
+    }
+
+    public void DemoteFromSuperAdmin(User demotingUser)
+    {
+        // Security validation through domain service
+        var superAdminService = new Services.SuperAdminDomainService();
+        superAdminService.ValidateCanDemoteFromSuperAdmin(demotingUser, this);
+
+        if (!IsSuperAdmin)
+            return; // Not a super admin
+
+        IsSuperAdmin = false;
+
+        RaiseDomainEvent(new UserDemotedFromSuperAdminDomainEvent(Id, demotingUser.Id, DateTimeOffset.UtcNow));
+    }
+
+    // Security Authorization Methods
+    public bool CanAccessTenant(Guid tenantId)
+    {
+        // Super admins can access any tenant
+        // Regular users only their member tenants
+        return IsSuperAdmin || IsMemberOfTenant(tenantId);
+    }
+
+    public bool CanManageGlobalSettings()
+    {
+        return IsSuperAdmin && IsActive;
+    }
+
+    public bool CanCreateTenants()
+    {
+        return IsSuperAdmin && IsActive;
+    }
+
+    public bool CanDeleteTenants()
+    {
+        return IsSuperAdmin && IsActive;
+    }
+
+    public bool CanManageAllUsers()
+    {
+        return IsSuperAdmin && IsActive;
+    }
+
+    public bool CanPromoteToSuperAdmin()
+    {
+        return IsSuperAdmin && IsActive;
+    }
+
+    public bool CanAccessTenantData(Guid tenantId)
+    {
+        // Super admins can access any tenant's data
+        // Regular users only if they're members
+        return IsSuperAdmin || IsMemberOfTenant(tenantId);
     }
 
     // Role Management Methods (for specific tenant)
